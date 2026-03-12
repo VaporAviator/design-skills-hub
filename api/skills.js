@@ -56,7 +56,7 @@ module.exports = async function handler(req, res) {
 
     const seedsWithScan = SEED_SKILLS.map(s => ({
       ...s,
-      securityScan: s.securityScan || { status: 'passed', scannedAt: '2026-03-01T00:00:00Z' },
+      securityScan: s.securityScan || { status: 'passed', scannedAt: '2026-03-01T00:00:00Z', permissionScopes: [{ name: 'File System Write', detected: false, flags: [] }, { name: 'Network Access', detected: false, flags: [] }, { name: 'Env Variable Access', detected: false, flags: [] }] },
     }));
     const all = [...submitted, ...seedsWithScan];
     const numbered = all.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
@@ -66,7 +66,7 @@ module.exports = async function handler(req, res) {
     // KV not configured — return seed data only
     const seedsWithScan = SEED_SKILLS.map(s => ({
       ...s,
-      securityScan: s.securityScan || { status: 'passed', scannedAt: '2026-03-01T00:00:00Z' },
+      securityScan: s.securityScan || { status: 'passed', scannedAt: '2026-03-01T00:00:00Z', permissionScopes: [{ name: 'File System Write', detected: false, flags: [] }, { name: 'Network Access', detected: false, flags: [] }, { name: 'Env Variable Access', detected: false, flags: [] }] },
     }));
     const numbered = seedsWithScan.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
     return res.status(200).json({ skills: numbered, total: numbered.length });

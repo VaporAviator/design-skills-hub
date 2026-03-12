@@ -227,8 +227,17 @@
                             <span id="scan-date" class="text-[10px] text-neutral-400 grotesk-text uppercase tracking-widest">Scanned Mar 1, 2026</span>
                         </div>
 
-                        <!-- Dimension Results -->
-                        <div id="scan-dimensions" class="space-y-2.5"></div>
+                        <!-- Permission Scope Section -->
+                        <div id="scan-permissions" class="mb-5 hidden">
+                            <h3 class="grotesk-text font-bold text-[10px] uppercase tracking-[0.2em] text-neutral-400 mb-3">Permission Scope</h3>
+                            <div id="scan-permission-rows" class="space-y-0"></div>
+                        </div>
+
+                        <!-- Threat Dimensions -->
+                        <div id="scan-dimensions-wrapper" class="hidden">
+                            <h3 class="grotesk-text font-bold text-[10px] uppercase tracking-[0.2em] text-neutral-400 mb-3">Threat Analysis</h3>
+                            <div id="scan-dimensions" class="space-y-0"></div>
+                        </div>
                     </section>
 
                     <section>
@@ -781,15 +790,79 @@
                 dateEl.textContent = 'Scanned ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             }
 
-            // Dimensions (only for submitted skills with full scan data)
+            // Permission Scope rows
+            const permWrapper = document.getElementById('scan-permissions');
+            const permRows = document.getElementById('scan-permission-rows');
+            if (scan.permissionScopes && scan.permissionScopes.length > 0) {
+                permWrapper.classList.remove('hidden');
+                const scopeIcons = {
+                    'File System Write': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg>',
+                    'Network Access': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"></path></svg>',
+                    'Env Variable Access': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"></path></svg>',
+                };
+                permRows.innerHTML = scan.permissionScopes.map(scope => {
+                    const icon = scopeIcons[scope.name] || '';
+                    if (scope.detected) {
+                        // Detected — highlight with amber/red
+                        const flagTags = scope.flags.slice(0, 4).map(f =>
+                            `<code class="px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded text-[10px] font-mono">${f.length > 24 ? f.slice(0, 24) + '...' : f}</code>`
+                        ).join(' ');
+                        const moreCount = scope.flags.length > 4 ? ` <span class="text-[10px] text-neutral-400">+${scope.flags.length - 4}</span>` : '';
+                        return `<div class="py-2.5 border-b border-neutral-50 last:border-0">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <div class="flex items-center gap-2 text-amber-700">
+                                    ${icon}
+                                    <span class="text-xs font-bold grotesk-text">${scope.name}</span>
+                                </div>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-amber-50 text-amber-600 grotesk-text">
+                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"></path></svg>
+                                    Detected
+                                </span>
+                            </div>
+                            <div class="flex flex-wrap gap-1 ml-5.5">${flagTags}${moreCount}</div>
+                        </div>`;
+                    } else {
+                        // Not detected — clean, subtle row
+                        return `<div class="flex items-center justify-between py-2.5 border-b border-neutral-50 last:border-0">
+                            <div class="flex items-center gap-2 text-neutral-400">
+                                ${icon}
+                                <span class="text-xs font-medium grotesk-text text-neutral-500">${scope.name}</span>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-neutral-300 grotesk-text">None</span>
+                        </div>`;
+                    }
+                }).join('');
+            } else {
+                // Seed skills without full scan — show default clean permission rows
+                permWrapper.classList.remove('hidden');
+                const defaultScopes = ['File System Write', 'Network Access', 'Env Variable Access'];
+                const defaultIcons = {
+                    'File System Write': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg>',
+                    'Network Access': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"></path></svg>',
+                    'Env Variable Access': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"></path></svg>',
+                };
+                permRows.innerHTML = defaultScopes.map(name =>
+                    `<div class="flex items-center justify-between py-2.5 border-b border-neutral-50 last:border-0">
+                        <div class="flex items-center gap-2 text-neutral-400">
+                            ${defaultIcons[name]}
+                            <span class="text-xs font-medium grotesk-text text-neutral-500">${name}</span>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-neutral-300 grotesk-text">None</span>
+                    </div>`
+                ).join('');
+            }
+
+            // Threat Dimensions (only for submitted skills with full scan data)
+            const dimsWrapper = document.getElementById('scan-dimensions-wrapper');
             const dimsEl = document.getElementById('scan-dimensions');
             if (scan.dimensions && scan.dimensions.length > 0) {
+                dimsWrapper.classList.remove('hidden');
                 const dimIcons = {
-                    'Code Injection': '💉',
-                    'Data Exfiltration': '📤',
-                    'Credential Access': '🔑',
-                    'File System Risk': '📁',
-                    'Network & Persistence': '🌐',
+                    'Code Injection': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"></path></svg>',
+                    'Data Exfiltration': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"></path></svg>',
+                    'Credential Access': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"></path></svg>',
+                    'File System Risk': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"></path></svg>',
+                    'Network & Persistence': '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"></path></svg>',
                 };
                 const statusColors = {
                     pass: { dot: 'bg-emerald-400', text: 'text-emerald-600', label: 'Pass' },
@@ -798,17 +871,22 @@
                 };
 
                 dimsEl.innerHTML = scan.dimensions.map(dim => {
-                    const icon = dimIcons[dim.name] || '🔍';
+                    const icon = dimIcons[dim.name] || '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path></svg>';
                     const sc = statusColors[dim.status] || statusColors.pass;
-                    return `<div class="flex items-center justify-between py-1.5 border-b border-neutral-50 last:border-0">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm">${icon}</span>
-                            <span class="text-xs font-medium text-neutral-600 grotesk-text">${dim.name}</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full ${sc.dot}"></span>
-                            <span class="text-[10px] font-bold uppercase tracking-widest ${sc.text} grotesk-text">${sc.label}</span>
-                        </div>
+                    const flagsHtml = (dim.flags && dim.flags.length > 0)
+                        ? `<div class="flex flex-wrap gap-1 mt-1 ml-5.5">${dim.flags.slice(0, 3).map(f => `<code class="px-1.5 py-0.5 bg-red-50 text-red-600 rounded text-[10px] font-mono">${f.length > 20 ? f.slice(0, 20) + '...' : f}</code>`).join('')}${dim.flags.length > 3 ? ` <span class="text-[10px] text-neutral-400">+${dim.flags.length - 3}</span>` : ''}</div>`
+                        : '';
+                    return `<div class="py-2 border-b border-neutral-50 last:border-0">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 ${dim.status === 'pass' ? 'text-neutral-400' : (dim.status === 'warning' ? 'text-amber-600' : 'text-red-600')}">
+                                ${icon}
+                                <span class="text-xs font-medium grotesk-text ${dim.status === 'pass' ? 'text-neutral-500' : ''}">${dim.name}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full ${sc.dot}"></span>
+                                <span class="text-[10px] font-bold uppercase tracking-widest ${sc.text} grotesk-text">${sc.label}</span>
+                            </div>
+                        </div>${flagsHtml}
                     </div>`;
                 }).join('');
             }

@@ -84,9 +84,84 @@ function scanContent(text) {
   if (hasAnyFail) overall = 'failed';
   else if (hasAnyWarning) overall = 'warning';
 
+  // --- Permission Scope Detection ---
+  const permissionScopes = [];
+
+  // File System Write
+  const fsWritePatterns = [
+    /fs\.(write|writeFile|writeFileSync|appendFile|createWriteStream)\b/gi,
+    /fs\.(unlink|rmdir|rm|rename|mkdir)\b/gi,
+    /\brm\s+-rf\b/gi,
+    /\bchmod\b/gi,
+    /\bchown\b/gi,
+    />\s*\/[a-z]/gi,
+    /write\s*(to\s+)?(file|disk|directory|folder)/gi,
+    /create\s+(file|directory|folder)/gi,
+    /save\s+(to\s+)?(file|disk|local)/gi,
+    /modify\s+(file|directory)/gi,
+  ];
+  const fsMatches = [];
+  for (const p of fsWritePatterns) {
+    const m = text.match(p);
+    if (m) fsMatches.push(...m.map(x => x.trim()));
+  }
+  permissionScopes.push({
+    name: 'File System Write',
+    detected: fsMatches.length > 0,
+    flags: [...new Set(fsMatches)],
+  });
+
+  // Network Access
+  const netPatterns = [
+    /\bfetch\s*\(/gi,
+    /\bcurl\s+/gi,
+    /\bwget\s+/gi,
+    /XMLHttpRequest/gi,
+    /navigator\.sendBeacon/gi,
+    /https?:\/\/(?!github\.com|raw\.githubusercontent\.com)[^\s"'`)\]]+/gi,
+    /\baxios\b/gi,
+    /\brequests?\.(get|post|put|delete|patch)\b/gi,
+    /external\s+(api|server|endpoint|service|url)/gi,
+    /send\s+(data|request|payload)\s+(to|via)/gi,
+  ];
+  const netMatches = [];
+  for (const p of netPatterns) {
+    const m = text.match(p);
+    if (m) netMatches.push(...m.map(x => x.trim()));
+  }
+  permissionScopes.push({
+    name: 'Network Access',
+    detected: netMatches.length > 0,
+    flags: [...new Set(netMatches)].slice(0, 8),
+  });
+
+  // Environment Variable Reading
+  const envPatterns = [
+    /process\.env\b/gi,
+    /\bAPI[_-]?KEY\b/gi,
+    /\bSECRET[_-]?KEY\b/gi,
+    /\bACCESS[_-]?TOKEN\b/gi,
+    /\.env\b/gi,
+    /\benvironment\s+variable/gi,
+    /\benv\s+var/gi,
+    /\bos\.environ/gi,
+    /\bgetenv\b/gi,
+  ];
+  const envMatches = [];
+  for (const p of envPatterns) {
+    const m = text.match(p);
+    if (m) envMatches.push(...m.map(x => x.trim()));
+  }
+  permissionScopes.push({
+    name: 'Env Variable Access',
+    detected: envMatches.length > 0,
+    flags: [...new Set(envMatches)],
+  });
+
   return {
     status: overall,
     dimensions: results,
+    permissionScopes,
     scannedAt: new Date().toISOString(),
   };
 }
