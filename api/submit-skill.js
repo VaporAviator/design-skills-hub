@@ -1,4 +1,5 @@
-const { scanContent, fetchSkillContent } = require('./security-scan');
+const securityScan = require('./security-scan');
+const { scanContent, fetchSkillContent } = securityScan;
 
 async function kvCommand(command, ...args) {
   const url = process.env.KV_REST_API_URL;

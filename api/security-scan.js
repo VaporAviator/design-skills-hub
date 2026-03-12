@@ -127,11 +127,8 @@ async function fetchSkillContent(repoPath, subpath) {
   return null;
 }
 
-// Export for reuse in submit-skill.js
-module.exports = { scanContent, fetchSkillContent };
-
-// Also serve as a Vercel API endpoint
-module.exports.default = async function handler(req, res) {
+// Vercel API endpoint handler
+async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -160,4 +157,9 @@ module.exports.default = async function handler(req, res) {
     console.error('Security scan error:', e);
     return res.status(500).json({ error: 'Security scan failed.' });
   }
-};
+}
+
+// Export handler as default for Vercel, attach shared functions
+module.exports = handler;
+module.exports.scanContent = scanContent;
+module.exports.fetchSkillContent = fetchSkillContent;
