@@ -27,6 +27,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -92,6 +94,37 @@
         .cmd-block:hover { background-color: #1a1a1a; }
         .cmd-block .copy-feedback { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.2s ease; }
         .cmd-block .copy-feedback.show { opacity: 1; }
+        /* Skill README rendered markdown */
+        .skill-readme { font-size: 15px; line-height: 1.75; color: #262626; }
+        .skill-readme h1 { font-size: 1.5em; font-weight: 700; margin: 1.5em 0 0.5em; font-family: 'Space Grotesk', sans-serif; }
+        .skill-readme h2 { font-size: 1.25em; font-weight: 700; margin: 1.3em 0 0.4em; font-family: 'Space Grotesk', sans-serif; border-bottom: 1px solid #e5e5e5; padding-bottom: 0.3em; }
+        .skill-readme h3 { font-size: 1.1em; font-weight: 600; margin: 1.2em 0 0.3em; font-family: 'Space Grotesk', sans-serif; }
+        .skill-readme h4, .skill-readme h5, .skill-readme h6 { font-size: 1em; font-weight: 600; margin: 1em 0 0.3em; }
+        .skill-readme p { margin: 0.7em 0; }
+        .skill-readme ul, .skill-readme ol { margin: 0.7em 0; padding-left: 1.5em; }
+        .skill-readme ul { list-style-type: disc; }
+        .skill-readme ol { list-style-type: decimal; }
+        .skill-readme li { margin: 0.25em 0; }
+        .skill-readme li > ul, .skill-readme li > ol { margin: 0.15em 0; }
+        .skill-readme code { background: #f1f1f1; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.88em; font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace; }
+        .skill-readme pre { background: #f1f1f1; padding: 16px; border-radius: 12px; overflow-x: auto; margin: 1em 0; font-size: 13px; line-height: 1.5; }
+        .skill-readme pre code { background: none; padding: 0; border-radius: 0; font-size: inherit; }
+        .skill-readme blockquote { border-left: 3px solid #d4d4d4; margin: 1em 0; padding: 0.5em 0 0.5em 1em; color: #525252; font-style: italic; }
+        .skill-readme table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+        .skill-readme th, .skill-readme td { border: 1px solid #e5e5e5; padding: 8px 12px; text-align: left; }
+        .skill-readme th { background: #fafafa; font-weight: 600; }
+        .skill-readme a { color: #000; text-decoration: underline; text-underline-offset: 2px; }
+        .skill-readme a:hover { color: #525252; }
+        .skill-readme img { max-width: 100%; border-radius: 8px; margin: 1em 0; }
+        .skill-readme hr { border: none; border-top: 1px solid #e5e5e5; margin: 1.5em 0; }
+        .skill-readme.collapsed { max-height: 600px; overflow: hidden; position: relative; }
+        .skill-readme.collapsed::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(transparent, white); pointer-events: none; }
+        @media (max-width: 640px) {
+            .skill-readme { font-size: 14px; }
+            .skill-readme pre { font-size: 12px; padding: 12px; }
+            .skill-readme table { font-size: 0.8em; display: block; overflow-x: auto; }
+            .skill-readme.collapsed { max-height: 400px; }
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-black selection:text-white">
@@ -181,15 +214,35 @@
 
                     <section>
                         <h2 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-6 italic">Description</h2>
-                        <article class="prose prose-neutral max-w-none text-neutral-800 font-medium leading-relaxed">
-                            <p id="desc-text">A professional design skill for AI agents. Provides precise instructions for code generation and design implementation.</p>
-                            <ul id="desc-bullets" class="list-disc pl-5 mt-4 space-y-2">
-                                <li>High-fidelity design specifications</li>
-                                <li>Optimized for AI agent consumption</li>
-                                <li>Production-ready output</li>
-                                <li>Cross-platform compatibility</li>
-                            </ul>
-                        </article>
+
+                        <!-- Summary (always shown) -->
+                        <p id="desc-text" class="text-neutral-800 font-medium leading-relaxed mb-4">A professional design skill for AI agents. Provides precise instructions for code generation and design implementation.</p>
+
+                        <!-- Fallback bullets (hidden when rich content loads) -->
+                        <ul id="desc-bullets" class="list-disc pl-5 space-y-2 text-neutral-800 font-medium leading-relaxed">
+                            <li>High-fidelity design specifications</li>
+                            <li>Optimized for AI agent consumption</li>
+                            <li>Production-ready output</li>
+                            <li>Cross-platform compatibility</li>
+                        </ul>
+
+                        <!-- Rich README / SKILL.md content area -->
+                        <div id="readme-container" class="hidden mt-6">
+                            <div id="readme-loading" class="flex items-center gap-2 text-neutral-400 text-sm py-4">
+                                <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z"></path></svg>
+                                Loading documentation...
+                            </div>
+                            <article id="readme-content" class="skill-readme hidden"></article>
+                            <div id="readme-toggle" class="hidden mt-4">
+                                <button id="readme-toggle-btn" class="grotesk-text text-xs font-bold uppercase tracking-[0.2em] text-neutral-400 hover:text-black transition-colors" onclick="toggleReadmeExpand()">Show More</button>
+                            </div>
+                            <div id="readme-source" class="hidden mt-4 pt-4 border-t border-neutral-100">
+                                <a id="readme-source-link" href="#" target="_blank" rel="noopener noreferrer" class="grotesk-text text-xs font-bold uppercase tracking-[0.2em] text-neutral-400 hover:text-black transition-colors inline-flex items-center gap-1">
+                                    Read full documentation on GitHub
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                </a>
+                            </div>
+                        </div>
                     </section>
 
                     <section>
@@ -654,6 +707,9 @@
 
             // Update page title
             document.title = data.name + ' | Design Skills Hub';
+
+            // Fetch and render full README / SKILL.md
+            loadSkillReadme(skillId, data);
         }
 
         function showToast(msg) {
@@ -662,6 +718,91 @@
             t.classList.remove('opacity-0','pointer-events-none');
             t.classList.add('opacity-100');
             setTimeout(() => { t.classList.add('opacity-0','pointer-events-none'); t.classList.remove('opacity-100'); }, 2500);
+        }
+
+        async function loadSkillReadme(skillId, data) {
+            const container = document.getElementById('readme-container');
+            const loading = document.getElementById('readme-loading');
+            const contentEl = document.getElementById('readme-content');
+            const toggleEl = document.getElementById('readme-toggle');
+            const sourceEl = document.getElementById('readme-source');
+            const sourceLink = document.getElementById('readme-source-link');
+            const bulletsEl = document.getElementById('desc-bullets');
+            if (!container) return;
+
+            // Determine repo path vs subpath from data.github
+            let repoPath = skillId;
+            let subpath = '';
+            if (data.github) {
+                const m = data.github.match(/github\.com\/([^\/]+\/[^\/\?\#]+)/);
+                if (m) {
+                    const ghRepo = m[1].replace(/\.git$/, '');
+                    if (ghRepo !== skillId) {
+                        repoPath = ghRepo;
+                        subpath = skillId.split('/').pop();
+                    }
+                }
+            }
+
+            container.classList.remove('hidden');
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/api/skill-readme?path=' + encodeURIComponent(repoPath);
+                if (subpath) url += '&subpath=' + encodeURIComponent(subpath);
+
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Fetch failed');
+                const json = await res.json();
+                if (!json.content) throw new Error('No content');
+
+                const html = DOMPurify.sanitize(marked.parse(json.content));
+
+                loading.classList.add('hidden');
+                contentEl.innerHTML = html;
+                contentEl.classList.remove('hidden');
+
+                // Hide simple bullets since we have rich content
+                if (bulletsEl) bulletsEl.classList.add('hidden');
+
+                // Collapse if content is very tall
+                requestAnimationFrame(() => {
+                    if (contentEl.scrollHeight > 700) {
+                        contentEl.classList.add('collapsed');
+                        toggleEl.classList.remove('hidden');
+                    }
+                });
+
+                // Show source link
+                const sourceFile = json.source || 'README.md';
+                let sourceUrl = data.github || ('https://github.com/' + skillId);
+                if (subpath && json.source.includes('/')) {
+                    sourceUrl = sourceUrl.replace(/\/?$/, '') + '/blob/main/' + json.source;
+                } else if (subpath) {
+                    sourceUrl = sourceUrl.replace(/\/?$/, '') + '/blob/main/' + subpath + '/' + sourceFile;
+                } else {
+                    sourceUrl = sourceUrl.replace(/\/?$/, '') + '/blob/main/' + sourceFile;
+                }
+                sourceLink.href = sourceUrl;
+                sourceEl.classList.remove('hidden');
+            } catch (e) {
+                // Graceful fallback — hide readme container, keep desc-text + bullets
+                console.warn('Could not load skill README:', e);
+                container.classList.add('hidden');
+            }
+        }
+
+        function toggleReadmeExpand() {
+            const contentEl = document.getElementById('readme-content');
+            const btn = document.getElementById('readme-toggle-btn');
+            if (contentEl.classList.contains('collapsed')) {
+                contentEl.classList.remove('collapsed');
+                btn.textContent = 'Show Less';
+            } else {
+                contentEl.classList.add('collapsed');
+                btn.textContent = 'Show More';
+                contentEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function copyAgentContext() {
