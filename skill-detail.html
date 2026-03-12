@@ -213,10 +213,7 @@
                     </section>
 
                     <section>
-                        <h2 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-6 italic">Description</h2>
-
-                        <!-- Summary (always shown) -->
-                        <p id="desc-text" class="text-neutral-800 font-medium leading-relaxed mb-4">A professional design skill for AI agents. Provides precise instructions for code generation and design implementation.</p>
+                        <h2 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-6 italic">Details</h2>
 
                         <!-- Fallback bullets (hidden when rich content loads) -->
                         <ul id="desc-bullets" class="list-disc pl-5 space-y-2 text-neutral-800 font-medium leading-relaxed">
@@ -586,8 +583,6 @@
             document.getElementById('skill-intro').innerText = data.description;
 
             // Update description text
-            const descText = document.getElementById('desc-text');
-            if (descText) descText.textContent = data.description;
 
             // Update description bullets
             if (data.bullets && data.bullets.length > 0) {
