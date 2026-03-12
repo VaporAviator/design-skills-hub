@@ -552,14 +552,14 @@
         async function loadSkillData(skillId) {
             let data = skillDataMap[skillId];
 
-            // For user-submitted skills not in seed data, fetch from API
-            if (!data) {
-                try {
-                    const res = await fetch('/api/skills');
-                    const json = await res.json();
-                    const skills = json.skills || json;
-                    const match = skills.find(s => s.path === skillId || s.id === skillId);
-                    if (match) {
+            // Fetch from API to get securityScan and fill missing data
+            try {
+                const res = await fetch('/api/skills');
+                const json = await res.json();
+                const skills = json.skills || json;
+                const match = skills.find(s => s.path === skillId || s.id === skillId);
+                if (match) {
+                    if (!data) {
                         data = {
                             name: match.name || skillId.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
                             github: match.githubUrl || ('https://github.com/' + skillId),
@@ -573,9 +573,13 @@
                             previewImage: match.previewImage || ''
                         };
                     }
-                } catch(e) {
-                    console.error('Failed to fetch skill data:', e);
+                    // Always merge securityScan from API
+                    if (match.securityScan) {
+                        data.securityScan = match.securityScan;
+                    }
                 }
+            } catch(e) {
+                console.error('Failed to fetch skill data:', e);
             }
 
             // Final fallback for unknown skills
