@@ -311,12 +311,12 @@
             }
             emptyState.classList.add('hidden');
             listContainer.innerHTML = skills.map(skill => `
-                <div class="group flex items-center justify-between p-6 ${skill.highlighted ? 'bg-white hover:bg-neutral-50 studio-pick-glow' : 'bg-white hover:bg-neutral-50 border border-neutral-100'} rounded-3xl transition-all cursor-pointer relative" onclick="location.href='skill-detail.html?id=${skill.path}'">
+                <div class="group flex items-center justify-between p-4 md:p-6 ${skill.highlighted ? 'bg-white hover:bg-neutral-50 studio-pick-glow' : 'bg-white hover:bg-neutral-50 border border-neutral-100'} rounded-3xl transition-all cursor-pointer relative" onclick="location.href='skill-detail.html?id=${skill.path}'">
                     ${skill.highlighted ? '<div class="absolute top-3 right-5 grotesk-text text-[8px] font-bold uppercase tracking-[0.3em] text-neutral-400">\u2605 Studio Pick</div>' : ''}
-                    <div class="flex items-center gap-8">
+                    <div class="flex items-center gap-3 md:gap-8">
                         <span class="grotesk-text font-bold text-neutral-300 w-6">${skill.id}</span>
-                        <div class="flex items-center gap-6">
-                            <div class="w-14 h-14 ${skill.highlighted ? 'bg-black text-white' : (skill.color || 'bg-neutral-100')} rounded-2xl flex items-center justify-center font-bold ${skill.highlighted ? 'serif-text text-lg italic' : 'grotesk-text text-sm'} shadow-sm overflow-hidden">
+                        <div class="flex items-center gap-3 md:gap-6">
+                            <div class="w-14 h-14 ${skill.highlighted ? 'bg-black text-white' : (skill.color || 'bg-neutral-100')} rounded-2xl hidden md:flex items-center justify-center font-bold ${skill.highlighted ? 'serif-text text-lg italic' : 'grotesk-text text-sm'} shadow-sm overflow-hidden">
                                 ${skill.svg ? '<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M24 22.525H0L12 1.475L24 22.525Z"/></svg>' : (skill.icon || '')}
                             </div>
                             <div>
@@ -324,7 +324,7 @@
                                     <h4 class="grotesk-text font-bold text-base">${skill.name}</h4>
                                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${skill.type === 'Aesthetic' ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-500'}">${skill.type || ''}</span>
                                 </div>
-                                <div class="flex items-center gap-3">
+                                <div class="hidden md:flex items-center gap-3">
                                     <div class="flex items-center gap-1.5">
                                         <img src="${skill.avatar || ''}" class="w-3.5 h-3.5 rounded-full bg-neutral-200" alt="Avatar" onerror="this.style.display='none'">
                                         <p class="text-[11px] text-neutral-400 font-medium uppercase tracking-wider">${skill.path}</p>
@@ -333,7 +333,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-16">
+                    <div class="flex items-center gap-4 md:gap-16">
                         <div class="text-right hidden lg:block">
                             <span class="block grotesk-text font-bold text-lg">${skill.installs}</span>
                             <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Installs</span>
