@@ -311,9 +311,9 @@
             }
             emptyState.classList.add('hidden');
             listContainer.innerHTML = skills.map(skill => `
-                <div class="group flex items-center justify-between p-4 md:p-6 ${skill.highlighted ? 'bg-white hover:bg-neutral-50 studio-pick-glow' : 'bg-white hover:bg-neutral-50 border border-neutral-100'} rounded-3xl transition-all cursor-pointer relative" onclick="location.href='skill-detail.html?id=${skill.path}'">
+                <div class="group flex items-start md:items-center justify-between p-4 md:p-6 ${skill.highlighted ? 'bg-white hover:bg-neutral-50 studio-pick-glow' : 'bg-white hover:bg-neutral-50 border border-neutral-100'} rounded-3xl transition-all cursor-pointer relative" onclick="location.href='skill-detail.html?id=${skill.path}'">
                     ${skill.highlighted ? '<div class="absolute top-3 right-5 grotesk-text text-[8px] font-bold uppercase tracking-[0.3em] text-neutral-400 hidden md:block">\u2605 Studio Pick</div>' : ''}
-                    <div class="flex items-center gap-3 md:gap-8">
+                    <div class="flex items-start md:items-center gap-3 md:gap-8">
                         <span class="grotesk-text font-bold text-neutral-300 w-6">${skill.id}</span>
                         <div class="flex items-center gap-3 md:gap-6">
                             <div class="w-14 h-14 ${skill.highlighted ? 'bg-black text-white' : (skill.color || 'bg-neutral-100')} rounded-2xl hidden md:flex items-center justify-center font-bold ${skill.highlighted ? 'serif-text text-lg italic' : 'grotesk-text text-sm'} shadow-sm overflow-hidden">
