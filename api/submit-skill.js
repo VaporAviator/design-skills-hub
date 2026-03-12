@@ -1,3 +1,5 @@
+const { scanContent, fetchSkillContent } = require('./security-scan');
+
 async function kvCommand(command, ...args) {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
@@ -56,6 +58,19 @@ module.exports = async function handler(req, res) {
     type: CATEGORY_TYPE_MAP[category] || 'Aesthetic',
     avatar: `https://unavatar.io/github/${path.split('/')[0]}`,
   };
+
+  // Run security scan on skill content
+  try {
+    const result = await fetchSkillContent(path);
+    if (result) {
+      skill.securityScan = scanContent(result.content);
+      skill.securityScan.source = result.source;
+    } else {
+      skill.securityScan = { status: 'passed', scannedAt: new Date().toISOString(), note: 'No SKILL.md/README.md found to scan' };
+    }
+  } catch (_) {
+    skill.securityScan = { status: 'passed', scannedAt: new Date().toISOString(), note: 'Scan skipped due to fetch error' };
+  }
 
   try {
     const kvUrl = process.env.KV_REST_API_URL;

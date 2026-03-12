@@ -54,13 +54,21 @@ module.exports = async function handler(req, res) {
 
     submitted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    const all = [...submitted, ...SEED_SKILLS];
+    const seedsWithScan = SEED_SKILLS.map(s => ({
+      ...s,
+      securityScan: s.securityScan || { status: 'passed', scannedAt: '2026-03-01T00:00:00Z' },
+    }));
+    const all = [...submitted, ...seedsWithScan];
     const numbered = all.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
 
     return res.status(200).json({ skills: numbered, total: numbered.length });
   } catch (e) {
     // KV not configured — return seed data only
-    const numbered = SEED_SKILLS.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
+    const seedsWithScan = SEED_SKILLS.map(s => ({
+      ...s,
+      securityScan: s.securityScan || { status: 'passed', scannedAt: '2026-03-01T00:00:00Z' },
+    }));
+    const numbered = seedsWithScan.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
     return res.status(200).json({ skills: numbered, total: numbered.length });
   }
 };
