@@ -134,8 +134,16 @@
                 <div class="space-y-6">
                     <div>
                         <label for="githubUrl" class="block grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-3">GitHub Repository URL <span class="text-red-400">*</span></label>
-                        <input type="url" id="githubUrl" name="githubUrl" required placeholder="https://github.com/username/my-agent-skill" class="w-full px-6 py-4 rounded-2xl bg-easel-bg grotesk-text font-medium text-sm">
-                        <p class="mt-2 text-[10px] text-neutral-400 grotesk-text font-medium">Your skill must contain a valid <code class="bg-neutral-100 px-1 rounded text-black">SKILL.md</code> file.</p>
+                        <div class="relative">
+                            <input type="url" id="githubUrl" name="githubUrl" required placeholder="https://github.com/username/my-agent-skill" class="w-full px-6 py-4 rounded-2xl bg-easel-bg grotesk-text font-medium text-sm pr-12">
+                            <div id="fetch-spinner" class="hidden absolute right-4 top-1/2 -translate-y-1/2">
+                                <div class="w-5 h-5 border-2 border-neutral-300 border-t-black rounded-full animate-spin"></div>
+                            </div>
+                            <div id="fetch-check" class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-green-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                        </div>
+                        <p id="fetch-hint" class="mt-2 text-[10px] text-neutral-400 grotesk-text font-medium">Your skill must contain a valid <code class="bg-neutral-100 px-1 rounded text-black">SKILL.md</code> file.</p>
                     </div>
                 </div>
             </section>
@@ -369,6 +377,83 @@
             successState.classList.add('hidden');
             formError.classList.add('hidden');
         }
+        // ─── Auto-fetch GitHub repo info ───
+        const githubInput = document.getElementById('githubUrl');
+        const fetchSpinner = document.getElementById('fetch-spinner');
+        const fetchCheck = document.getElementById('fetch-check');
+        const fetchHint = document.getElementById('fetch-hint');
+        let fetchTimeout = null;
+
+        githubInput.addEventListener('input', () => {
+            clearTimeout(fetchTimeout);
+            fetchCheck.classList.add('hidden');
+            const url = githubInput.value.trim();
+            if (url.includes('github.com/') && url.split('/').length >= 5) {
+                fetchTimeout = setTimeout(() => autoFetchRepo(url), 600);
+            }
+        });
+
+        githubInput.addEventListener('paste', () => {
+            setTimeout(() => {
+                const url = githubInput.value.trim();
+                if (url.includes('github.com/') && url.split('/').length >= 5) {
+                    autoFetchRepo(url);
+                }
+            }, 100);
+        });
+
+        async function autoFetchRepo(url) {
+            fetchSpinner.classList.remove('hidden');
+            fetchCheck.classList.add('hidden');
+            fetchHint.textContent = 'Fetching repository info...';
+
+            try {
+                const res = await fetch('/api/fetch-repo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ githubUrl: url }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                // Pre-fill name if empty
+                const nameInput = document.getElementById('skillName');
+                if (!nameInput.value.trim() && data.name) {
+                    nameInput.value = data.name;
+                    nameInput.classList.add('ring-2', 'ring-green-200');
+                    setTimeout(() => nameInput.classList.remove('ring-2', 'ring-green-200'), 2000);
+                }
+
+                // Pre-fill description if empty
+                const descInput = document.getElementById('description');
+                if (!descInput.value.trim() && data.description) {
+                    descInput.value = data.description;
+                    descInput.classList.add('ring-2', 'ring-green-200');
+                    setTimeout(() => descInput.classList.remove('ring-2', 'ring-green-200'), 2000);
+                }
+
+                // Pre-fill category if not selected
+                const catSelect = document.getElementById('category');
+                if (!catSelect.value && data.category) {
+                    catSelect.value = data.category;
+                    catSelect.classList.add('ring-2', 'ring-green-200');
+                    setTimeout(() => catSelect.classList.remove('ring-2', 'ring-green-200'), 2000);
+                }
+
+                // Show success
+                fetchSpinner.classList.add('hidden');
+                fetchCheck.classList.remove('hidden');
+                const filledFields = [data.name && 'name', data.description && 'description', data.category && 'category'].filter(Boolean);
+                fetchHint.innerHTML = filledFields.length
+                    ? `<span class="text-green-600">Auto-filled ${filledFields.join(', ')} from repo.</span> You can edit them below.`
+                    : 'Repository found. Fill in the details below.';
+
+            } catch (err) {
+                fetchSpinner.classList.add('hidden');
+                fetchHint.textContent = 'Could not fetch repo info. Fill in details manually.';
+            }
+        }
+
         // ─── Image Upload ───
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
