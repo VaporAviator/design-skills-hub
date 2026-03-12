@@ -375,7 +375,12 @@
                 const mid = Math.floor(filtered.length / 2);
                 filtered = [...filtered.slice(mid), ...filtered.slice(0, mid)];
             }
-            // 'highlighted' = default order from API
+            if (activeSort === 'highlighted') {
+                // Highlighted items pinned to top, rest sorted by installs
+                const pinned = filtered.filter(s => s.highlighted);
+                const rest = filtered.filter(s => !s.highlighted).sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
+                filtered = [...pinned, ...rest];
+            }
 
             // Re-number
             filtered = filtered.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
@@ -423,7 +428,7 @@
             } catch (e) {
                 // Fallback seed data
                 allSkills = [
-                    { id: '01', name: 'VaporAviator Easel Style', path: 'vaporaviator/easel-style', installs: '312.8K', color: 'bg-black', icon: 'E', type: 'Aesthetic', avatar: 'https://unavatar.io/twitter/VaporAviator', highlighted: true },
+                    { id: '01', name: 'VaporAviator Easel Style', path: 'vaporaviator/easel-style', installs: '28.6K', color: 'bg-black', icon: 'E', type: 'Aesthetic', avatar: 'https://unavatar.io/twitter/VaporAviator', highlighted: true },
                     { id: '02', name: 'Vercel React Best Practices', path: 'vercel-labs/vercel-react-best-practices', installs: '197.3K', color: 'bg-neutral-200', icon: '', svg: true, type: 'Engineering', avatar: 'https://unavatar.io/github/vercel' },
                     { id: '03', name: 'Web Design Guidelines', path: 'vercel-labs/web-design-guidelines', installs: '154.8K', color: 'bg-neutral-200', icon: '', svg: true, type: 'Engineering', avatar: 'https://unavatar.io/github/vercel' },
                     { id: '04', name: 'Frontend Design', path: 'anthropics/frontend-design', installs: '143.7K', color: 'bg-orange-50', icon: 'FD', type: 'Aesthetic', avatar: 'https://unavatar.io/github/anthropics' },
