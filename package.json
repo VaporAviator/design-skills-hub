@@ -1,7 +1,30 @@
 {
   "name": "design-skills-hub",
   "version": "1.0.0",
-  "private": true,
+  "description": "Browse and install AI agent design skills from designskills.xyz",
+  "bin": {
+    "design-skills-hub": "./bin/cli.js"
+  },
+  "files": [
+    "bin/cli.js"
+  ],
+  "keywords": [
+    "claude",
+    "skills",
+    "design",
+    "agent",
+    "ai",
+    "claude-code"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VaporAviator/design-skills-hub"
+  },
+  "homepage": "https://designskills.xyz",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@vercel/blob": "^2.3.1"
   }
