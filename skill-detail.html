@@ -278,12 +278,12 @@
         </div>
 
         <!-- Preview Image -->
-        <div class="w-full h-[500px] bg-neutral-200 rounded-easel mt-16 overflow-hidden relative group">
-            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Skill Preview">
+        <div id="preview-section" class="w-full h-[500px] bg-neutral-200 rounded-easel mt-16 overflow-hidden relative group">
+            <img id="preview-image" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Skill Preview">
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             <div class="absolute bottom-12 left-12 text-white">
                 <div class="px-4 py-2 bg-white/20 backdrop-blur-md rounded-full inline-block mb-4 grotesk-text text-[10px] font-bold uppercase tracking-widest">Visual DNA Preview</div>
-                <h2 class="serif-text text-5xl italic">The Easel: Modern High-Contrast Dashboard Style</h2>
+                <h2 id="preview-title" class="serif-text text-5xl italic">The Easel: Modern High-Contrast Dashboard Style</h2>
             </div>
         </div>
     </main>
@@ -478,20 +478,55 @@
         };
 
         if (skillId) {
-            const data = skillDataMap[skillId] || {
-                name: skillId.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                github: 'https://github.com/' + skillId,
-                website: '',
-                avatar: 'https://unavatar.io/github/' + skillId.split('/')[0],
-                stars: '',
-                installs: '0',
-                description: 'A design skill for AI agents.',
-                bullets: []
-            };
+            loadSkillData(skillId);
+        }
+
+        async function loadSkillData(skillId) {
+            let data = skillDataMap[skillId];
+
+            // For user-submitted skills not in seed data, fetch from API
+            if (!data) {
+                try {
+                    const res = await fetch('/api/skills');
+                    const json = await res.json();
+                    const skills = json.skills || json;
+                    const match = skills.find(s => s.path === skillId || s.id === skillId);
+                    if (match) {
+                        data = {
+                            name: match.name || skillId.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                            github: match.githubUrl || ('https://github.com/' + skillId),
+                            website: '',
+                            avatar: match.avatar || ('https://unavatar.io/github/' + skillId.split('/')[0]),
+                            stars: match.stars ? Number(match.stars).toLocaleString() : '',
+                            installs: match.installs || '0',
+                            type: match.type || 'Aesthetic',
+                            description: match.description || 'A design skill for AI agents.',
+                            bullets: [],
+                            previewImage: match.previewImage || ''
+                        };
+                    }
+                } catch(e) {
+                    console.error('Failed to fetch skill data:', e);
+                }
+            }
+
+            // Final fallback for unknown skills
+            if (!data) {
+                data = {
+                    name: skillId.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                    github: 'https://github.com/' + skillId,
+                    website: '',
+                    avatar: 'https://unavatar.io/github/' + skillId.split('/')[0],
+                    stars: '',
+                    installs: '0',
+                    description: 'A design skill for AI agents.',
+                    bullets: [],
+                    previewImage: ''
+                };
+            }
 
             // Update title and heading
             document.querySelector('h1').innerText = data.name;
-            document.querySelector('.serif-text.text-5xl.italic').innerText = data.name + ': AI Agent Skill';
             document.querySelector('pre').innerText = 'npx hub add ' + skillId;
             document.querySelector('.text-xl.text-neutral-500').innerText = data.description;
 
@@ -605,6 +640,17 @@
             // Update breadcrumbs
             document.getElementById('breadcrumb-author').textContent = skillId.split('/')[0];
             document.getElementById('breadcrumb-skill').textContent = skillId.split('/').pop();
+
+            // Update preview image and title
+            const previewImg = document.getElementById('preview-image');
+            const previewTitle = document.getElementById('preview-title');
+            if (previewTitle) {
+                previewTitle.textContent = data.name;
+            }
+            if (previewImg && data.previewImage) {
+                previewImg.src = data.previewImage;
+                previewImg.alt = data.name + ' Preview';
+            }
 
             // Update page title
             document.title = data.name + ' | Design Skills Hub';
