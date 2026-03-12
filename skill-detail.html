@@ -595,7 +595,7 @@
                 };
                 const ic = iconMap[skillId];
                 if (ic) {
-                    iconEl.className = 'w-24 h-24 rounded-[32px] flex items-center justify-center font-bold shadow-2xl ' + ic.color + ' ' + ic.textColor;
+                    iconEl.className = 'hidden md:flex w-24 h-24 rounded-[32px] items-center justify-center font-bold shadow-2xl ' + ic.color + ' ' + ic.textColor;
                     if (ic.svg) {
                         iconEl.innerHTML = '<svg class="w-10 h-10 fill-current" viewBox="0 0 24 24"><path d="M24 22.525H0L12 1.475L24 22.525Z"/></svg>';
                     } else {
@@ -603,7 +603,7 @@
                     }
                 } else {
                     const initials = skillId.split('/').pop().split('-').map(w => w[0]).join('').toUpperCase().slice(0,2);
-                    iconEl.className = 'w-24 h-24 rounded-[32px] flex items-center justify-center font-bold shadow-2xl bg-neutral-100 text-neutral-600';
+                    iconEl.className = 'hidden md:flex w-24 h-24 rounded-[32px] items-center justify-center font-bold shadow-2xl bg-neutral-100 text-neutral-600';
                     iconEl.innerHTML = '<span class="serif-text text-4xl font-bold italic">' + initials + '</span>';
                 }
             }
