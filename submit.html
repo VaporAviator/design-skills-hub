@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Skill | Design Skills Hub</title>
+    <meta name="description" content="Submit your design skill to the Design Skills Hub registry. Share your aesthetic DNA with AI agents worldwide.">
+    <meta property="og:title" content="Submit Skill | Design Skills Hub">
+    <meta property="og:description" content="Share your design DNA with the AI ecosystem on Design Skills Hub.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        easel: {
+                            bg: '#f9f9f9',
+                            fg: '#000000',
+                            accent: '#000000',
+                            card: '#ffffff'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Instrument Serif"', 'serif'],
+                        grotesk: ['"Space Grotesk"', 'sans-serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'easel': '40px',
+                        'easel-button': '36px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f9f9f9; color: #000; font-family: 'Inter', sans-serif; }
+        .serif-text { font-family: 'Instrument Serif', serif; }
+        .grotesk-text { font-family: 'Space Grotesk', sans-serif; }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            background: rgba(249, 249, 249, 0.8);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        input, textarea, select {
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: #000;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(0,0,0,0.03);
+        }
+        /* Install Hub Modal */
+        #install-modal { transition: opacity 0.25s ease, visibility 0.25s ease; }
+        #install-modal.modal-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        #install-modal .modal-panel { transition: transform 0.25s ease, opacity 0.25s ease; transform: translateY(0) scale(1); }
+        #install-modal.modal-hidden .modal-panel { transform: translateY(24px) scale(0.97); opacity: 0; }
+        .cmd-block { position: relative; cursor: pointer; transition: background-color 0.15s ease; }
+        .cmd-block:hover { background-color: #1a1a1a; }
+        .cmd-block .copy-feedback { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.2s ease; }
+        .cmd-block .copy-feedback.show { opacity: 1; }
+    </style>
+</head>
+<body class="antialiased selection:bg-black selection:text-white">
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-black rounded-full"></div>
+                <span class="grotesk-text font-bold text-xl tracking-tight uppercase">Design Skills Hub</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 grotesk-text font-medium text-sm uppercase tracking-wider">
+                <a href="skills.html" class="hover:opacity-50 transition-opacity">Skills</a>
+                <a href="submit.html" class="opacity-100 transition-opacity border-b-2 border-black pb-1">Submit</a>
+                <a href="about.html" class="hover:opacity-50 transition-opacity">About</a>
+                <button onclick="openInstallModal()" class="bg-black text-white px-6 py-2.5 rounded-easel-button hover:bg-neutral-800 transition-colors">Install Hub</button>
+            </div>
+            <button class="md:hidden" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" aria-label="Menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+        </div>
+    </nav>
+    <div id="mobile-menu" class="hidden fixed inset-0 z-[60] bg-[#f9f9f9]">
+        <div class="flex flex-col h-full">
+            <div class="flex items-center justify-between px-6 h-20">
+                <a href="index.html" class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-black rounded-full"></div>
+                    <span class="grotesk-text font-bold text-xl tracking-tight uppercase">Design Skills Hub</span>
+                </a>
+                <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" aria-label="Close menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="flex flex-col items-center justify-center flex-1 gap-8 grotesk-text font-medium text-lg uppercase tracking-wider">
+                <a href="skills.html" class="hover:opacity-50 transition-opacity">Skills</a>
+                <a href="submit.html" class="font-bold">Submit</a>
+                <a href="about.html" class="hover:opacity-50 transition-opacity">About</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="pt-40 pb-20 px-6 max-w-3xl mx-auto">
+        <header class="mb-16 text-center">
+            <h1 class="serif-text text-7xl mb-6">Submit your Skill</h1>
+            <p class="text-xl text-neutral-500 font-medium grotesk-text">Share your design DNA with the AI ecosystem.</p>
+        </header>
+
+        <!-- Form -->
+        <form id="submit-form" class="space-y-12 bg-white p-12 rounded-easel shadow-sm border border-neutral-100">
+            <!-- Step 1: Source -->
+            <section>
+                <h3 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-8 italic">01. Source Information</h3>
+                <div class="space-y-6">
+                    <div>
+                        <label for="githubUrl" class="block grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-3">GitHub Repository URL <span class="text-red-400">*</span></label>
+                        <input type="url" id="githubUrl" name="githubUrl" required placeholder="https://github.com/username/my-agent-skill" class="w-full px-6 py-4 rounded-2xl bg-easel-bg grotesk-text font-medium text-sm">
+                        <p class="mt-2 text-[10px] text-neutral-400 grotesk-text font-medium">Your skill must contain a valid <code class="bg-neutral-100 px-1 rounded text-black">SKILL.md</code> file.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: Skill Type -->
+            <section>
+                <h3 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-8 italic">02. Skill Type <span class="text-red-400">*</span></h3>
+                <input type="hidden" id="skillType" name="skillType" value="">
+                <div class="flex gap-3" id="type-toggle">
+                    <button type="button" data-type="Aesthetic" class="type-btn flex-1 py-4 rounded-2xl grotesk-text text-[11px] font-bold uppercase tracking-widest border-2 border-neutral-200 text-neutral-400 hover:border-neutral-300 transition-all">Aesthetic</button>
+                    <button type="button" data-type="Engineering" class="type-btn flex-1 py-4 rounded-2xl grotesk-text text-[11px] font-bold uppercase tracking-widest border-2 border-neutral-200 text-neutral-400 hover:border-neutral-300 transition-all">Engineering</button>
+                </div>
+                <p class="mt-3 text-[10px] text-neutral-400 grotesk-text font-medium">Aesthetic = visual design DNA (colors, typography, spacing). Engineering = code standards &amp; architecture rules.</p>
+            </section>
+
+            <!-- Step 3: Skill Details -->
+            <section>
+                <h3 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-8 italic">03. Skill Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="skillName" class="block grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-3">Skill Name <span class="text-red-400">*</span></label>
+                        <input type="text" id="skillName" name="name" required placeholder="e.g. Minimalist Pro" class="w-full px-6 py-4 rounded-2xl bg-easel-bg grotesk-text font-medium text-sm">
+                    </div>
+                    <div>
+                        <label for="category" class="block grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-3">Category</label>
+                        <select id="category" name="category" class="w-full px-6 py-4 rounded-2xl bg-easel-bg grotesk-text font-medium text-sm appearance-none cursor-pointer">
+                            <option value="" disabled selected>Select a category...</option>
+                            <optgroup label="Aesthetic">
+                                <option value="Design System">Design System</option>
+                                <option value="Brand Identity">Brand Identity</option>
+                                <option value="Typography System">Typography System</option>
+                                <option value="Color Palette">Color Palette</option>
+                                <option value="Layout & Grid">Layout & Grid</option>
+                                <option value="Iconography">Iconography</option>
+                                <option value="Motion & Animation">Motion & Animation</option>
+                                <option value="Dark Mode">Dark Mode</option>
+                                <option value="Responsive Design">Responsive Design</option>
+                            </optgroup>
+                            <optgroup label="Engineering">
+                                <option value="Framework Specs">Framework Specs</option>
+                                <option value="Component Architecture">Component Architecture</option>
+                                <option value="Performance Rules">Performance Rules</option>
+                                <option value="Accessibility & A11y">Accessibility & A11y</option>
+                                <option value="API Standards">API Standards</option>
+                                <option value="Testing Patterns">Testing Patterns</option>
+                                <option value="Security Rules">Security Rules</option>
+                                <option value="DevOps & CI/CD">DevOps & CI/CD</option>
+                                <option value="Code Style & Linting">Code Style & Linting</option>
+                            </optgroup>
+                            <optgroup label="Other">
+                                <option value="Other">Other</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="description" class="block grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-3">Short Description</label>
+                        <textarea id="description" name="description" rows="3" placeholder="Explain what this skill enables agents to do..." class="w-full px-6 py-4 rounded-2xl bg-easel-bg grotesk-text font-medium text-sm"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 4: Visual Identity -->
+            <section>
+                <h3 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-8 italic">04. Visual Identity</h3>
+                <div class="space-y-6">
+                    <div>
+                        <label for="previewImage" class="block grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-3">Hero Preview Image URL</label>
+                        <input type="url" id="previewImage" name="previewImage" placeholder="https://my-site.com/preview.png" class="w-full px-6 py-4 rounded-2xl bg-easel-bg grotesk-text font-medium text-sm">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error message -->
+            <div id="form-error" class="hidden p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 grotesk-text text-sm font-medium"></div>
+
+            <div class="pt-8 border-t border-neutral-100">
+                <button type="submit" id="submit-btn" class="w-full py-5 bg-black text-white rounded-easel-button font-bold grotesk-text uppercase tracking-widest hover:bg-neutral-800 transition-colors shadow-xl flex items-center justify-center gap-3">
+                    <span id="btn-text">Publish to Registry</span>
+                    <div id="btn-spinner" class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                </button>
+                <p class="mt-4 text-center text-[10px] font-bold text-neutral-400 grotesk-text uppercase tracking-widest">By submitting, you agree to our Design Skills Hub protocol.</p>
+            </div>
+        </form>
+
+        <!-- Success State (hidden by default) -->
+        <div id="success-state" class="hidden text-center py-20">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="serif-text text-5xl mb-4">Skill Published!</h2>
+            <p class="text-neutral-500 grotesk-text text-lg mb-8">Your design skill is now live on the registry.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="skills.html" class="px-8 py-4 bg-black text-white rounded-easel-button font-bold grotesk-text uppercase tracking-widest hover:bg-neutral-800 transition-colors text-xs">View Leaderboard</a>
+                <button onclick="resetForm()" class="px-8 py-4 bg-neutral-100 rounded-easel-button font-bold grotesk-text uppercase tracking-widest hover:bg-neutral-200 transition-colors text-xs">Submit Another</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-12 px-6 grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <span>&copy; 2026 Design Skills Hub &bull; By VaporAviator Labs</span>
+            <div class="flex gap-8">
+                <a href="https://x.com/VaporAviatorLab" target="_blank" class="hover:text-black transition-colors">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const form = document.getElementById('submit-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const formError = document.getElementById('form-error');
+        const successState = document.getElementById('success-state');
+
+        // Skill Type toggle
+        document.querySelectorAll('.type-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.type-btn').forEach(b => {
+                    b.classList.remove('bg-black', 'text-white', 'border-black');
+                    b.classList.add('border-neutral-200', 'text-neutral-400');
+                });
+                btn.classList.remove('border-neutral-200', 'text-neutral-400');
+                btn.classList.add('bg-black', 'text-white', 'border-black');
+                document.getElementById('skillType').value = btn.dataset.type;
+            });
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            formError.classList.add('hidden');
+
+            const name = document.getElementById('skillName').value.trim();
+            const githubUrl = document.getElementById('githubUrl').value.trim();
+            const skillType = document.getElementById('skillType').value;
+            const category = document.getElementById('category').value;
+            const description = document.getElementById('description').value.trim();
+            const previewImage = document.getElementById('previewImage').value.trim();
+
+            // Validate
+            if (!name || !githubUrl) {
+                formError.textContent = 'Skill name and GitHub URL are required.';
+                formError.classList.remove('hidden');
+                return;
+            }
+
+            if (!skillType) {
+                formError.textContent = 'Please select a skill type (Aesthetic or Engineering).';
+                formError.classList.remove('hidden');
+                return;
+            }
+
+            if (!githubUrl.includes('github.com/')) {
+                formError.textContent = 'Please enter a valid GitHub repository URL.';
+                formError.classList.remove('hidden');
+                return;
+            }
+
+            // Show loading
+            submitBtn.disabled = true;
+            btnText.textContent = 'Publishing...';
+            btnSpinner.classList.remove('hidden');
+
+            try {
+                const res = await fetch('/api/submit-skill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, githubUrl, skillType, category, description, previewImage }),
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || 'Submission failed.');
+                }
+
+                // Success
+                form.classList.add('hidden');
+                document.querySelector('header').classList.add('hidden');
+                successState.classList.remove('hidden');
+
+            } catch (err) {
+                formError.textContent = err.message || 'Something went wrong. Please try again.';
+                formError.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                btnText.textContent = 'Publish to Registry';
+                btnSpinner.classList.add('hidden');
+            }
+        });
+
+        function resetForm() {
+            form.reset();
+            // Reset Skill Type toggle visual state
+            document.querySelectorAll('.type-btn').forEach(b => {
+                b.classList.remove('bg-black', 'text-white', 'border-black');
+                b.classList.add('border-neutral-200', 'text-neutral-400');
+            });
+            document.getElementById('skillType').value = '';
+            form.classList.remove('hidden');
+            document.querySelector('header').classList.remove('hidden');
+            successState.classList.add('hidden');
+            formError.classList.add('hidden');
+        }
+        // Toast
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            if (!t) return;
+            t.textContent = msg;
+            t.classList.remove('opacity-0','pointer-events-none');
+            t.classList.add('opacity-100');
+            setTimeout(() => { t.classList.add('opacity-0','pointer-events-none'); t.classList.remove('opacity-100'); }, 2500);
+        }
+
+        // Install Hub Modal
+        function openInstallModal() {
+            document.getElementById('install-modal').classList.remove('modal-hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeInstallModal() {
+            document.getElementById('install-modal').classList.add('modal-hidden');
+            document.body.style.overflow = '';
+        }
+        function copyCommand(cmd, el) {
+            navigator.clipboard.writeText(cmd).then(() => {
+                const feedback = el.querySelector('.copy-feedback');
+                const icon = el.querySelector('.copy-icon');
+                if (feedback) {
+                    feedback.classList.add('show');
+                    if (icon) icon.style.display = 'none';
+                    setTimeout(() => { feedback.classList.remove('show'); if (icon) icon.style.display = ''; }, 1800);
+                }
+                if (typeof showToast === 'function') showToast('Copied to clipboard');
+            });
+        }
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeInstallModal(); });
+    </script>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-black text-white px-8 py-4 rounded-full grotesk-text text-xs font-bold uppercase tracking-widest shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-[70]"></div>
+
+    <!-- Install Hub Modal -->
+    <div id="install-modal" class="modal-hidden fixed inset-0 z-[80] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeInstallModal()"></div>
+        <div class="modal-panel relative bg-white rounded-easel max-w-lg w-full p-10 md:p-12 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeInstallModal()" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors" aria-label="Close">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="mb-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    </div>
+                    <h2 class="serif-text text-3xl md:text-4xl italic">Install the Hub</h2>
+                </div>
+                <p class="text-neutral-500 text-sm font-medium leading-relaxed">One command connects all your AI agents to the full skill registry.</p>
+            </div>
+            <div class="mb-8">
+                <div class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Run in your terminal</div>
+                <div class="cmd-block bg-neutral-900 text-white rounded-2xl px-5 py-4 font-mono text-sm flex items-center justify-between" onclick="copyCommand('npx design-skills-hub', this)">
+                    <code>$ npx design-skills-hub</code>
+                    <span class="copy-feedback grotesk-text text-[10px] font-bold text-green-400 uppercase tracking-widest">Copied!</span>
+                    <svg class="w-4 h-4 text-neutral-500 hover:text-white transition-colors shrink-0 ml-4 copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </div>
+            </div>
+            <div class="p-5 bg-neutral-50 rounded-2xl border border-neutral-100 mb-8">
+                <div class="grotesk-text font-bold text-[10px] uppercase tracking-widest text-neutral-400 mb-3">What happens</div>
+                <div class="space-y-2.5 text-sm text-neutral-600 font-medium">
+                    <div class="flex items-start gap-3">
+                        <div class="w-5 h-5 rounded-full bg-black flex items-center justify-center shrink-0 mt-0.5"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                        <span>Detects all AI agents on your machine</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-5 h-5 rounded-full bg-black flex items-center justify-center shrink-0 mt-0.5"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                        <span>Connects them to the Hub skill registry</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-5 h-5 rounded-full bg-black flex items-center justify-center shrink-0 mt-0.5"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                        <span>Agents can now search, install, and execute any skill</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">Supported Agents</div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">&#x1F99E; OpenClaw</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Claude Code</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Cursor</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Windsurf</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">v0</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">ChatGPT</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Bolt</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Lovable</span>
+                </div>
+            </div>
+            <div class="mt-8 pt-6 border-t border-neutral-100 text-center">
+                <a href="about.html" class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest hover:text-black transition-colors underline underline-offset-4">Read the full operating manual &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

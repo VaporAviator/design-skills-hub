@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Skills Hub | For Designers and Agents</title>
+    <meta name="description" content="An open ecosystem where AI agents discover, install, and execute high-fidelity design skills. Turn Figma into executable aesthetic DNA.">
+    <meta property="og:title" content="Design Skills Hub | For Designers and Agents">
+    <meta property="og:description" content="Where aesthetics can be searched, installed, and executed by AI agents.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Design Skills Hub">
+    <meta name="twitter:description" content="Where aesthetics can be searched, installed, and executed by AI agents.">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        easel: {
+                            bg: '#f9f9f9',
+                            fg: '#000000',
+                            accent: '#000000',
+                            card: '#ffffff'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Instrument Serif"', 'serif'],
+                        grotesk: ['"Space Grotesk"', 'sans-serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'easel': '40px',
+                        'easel-button': '36px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f9f9f9; color: #000; font-family: 'Inter', sans-serif; }
+        .serif-text { font-family: 'Instrument Serif', serif; }
+        .grotesk-text { font-family: 'Space Grotesk', sans-serif; }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            background: rgba(249, 249, 249, 0.8);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        /* Install tooltip */
+        .install-tip { position: relative; }
+        .install-tip .tip-content {
+            visibility: hidden; opacity: 0;
+            position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%);
+            background: #171717; color: #fff; padding: 12px 16px; border-radius: 16px;
+            white-space: nowrap; font-size: 11px; font-weight: 500;
+            transition: all 0.2s ease; pointer-events: none; z-index: 40;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .install-tip .tip-content::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border: 6px solid transparent; border-top-color: #171717;
+        }
+        .install-tip:hover .tip-content,
+        .install-tip:focus-within .tip-content { visibility: visible; opacity: 1; }
+        /* Install Hub Modal */
+        #install-modal { transition: opacity 0.25s ease, visibility 0.25s ease; }
+        #install-modal.modal-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        #install-modal .modal-panel { transition: transform 0.25s ease, opacity 0.25s ease; transform: translateY(0) scale(1); }
+        #install-modal.modal-hidden .modal-panel { transform: translateY(24px) scale(0.97); opacity: 0; }
+        .cmd-block { position: relative; cursor: pointer; transition: background-color 0.15s ease; }
+        .cmd-block:hover { background-color: #1a1a1a; }
+        .cmd-block .copy-feedback { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.2s ease; }
+        .cmd-block .copy-feedback.show { opacity: 1; }
+        /* Studio Pick glow */
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 8px rgba(157,132,186,0.15), 0 0 20px rgba(157,132,186,0.08); }
+            50% { box-shadow: 0 0 16px rgba(157,132,186,0.25), 0 0 36px rgba(157,132,186,0.12); }
+        }
+        .studio-pick-glow {
+            border: 1.5px solid rgba(157,132,186,0.2);
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-black selection:text-white">
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-black rounded-full"></div>
+                <span class="grotesk-text font-bold text-xl tracking-tight uppercase">Design Skills Hub</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 grotesk-text font-medium text-sm uppercase tracking-wider">
+                <a href="skills.html" class="hover:opacity-50 transition-opacity">Skills</a>
+                <a href="submit.html" class="hover:opacity-50 transition-opacity">Submit</a>
+                <a href="about.html" class="hover:opacity-50 transition-opacity">About</a>
+                <button onclick="openInstallModal()" class="bg-black text-white px-6 py-2.5 rounded-easel-button hover:bg-neutral-800 transition-colors">Install Hub</button>
+            </div>
+            <button class="md:hidden" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" aria-label="Menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+        </div>
+    </nav>
+    <div id="mobile-menu" class="hidden fixed inset-0 z-[60] bg-[#f9f9f9]">
+        <div class="flex flex-col h-full">
+            <div class="flex items-center justify-between px-6 h-20">
+                <a href="index.html" class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-black rounded-full"></div>
+                    <span class="grotesk-text font-bold text-xl tracking-tight uppercase">Design Skills Hub</span>
+                </a>
+                <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" aria-label="Close menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="flex flex-col items-center justify-center flex-1 gap-8 grotesk-text font-medium text-lg uppercase tracking-wider">
+                <a href="skills.html" class="hover:opacity-50 transition-opacity">Skills</a>
+                <a href="submit.html" class="hover:opacity-50 transition-opacity">Submit</a>
+                <a href="about.html" class="hover:opacity-50 transition-opacity">About</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="pt-32 pb-8 px-6">
+        <div class="max-w-5xl mx-auto text-center">
+            <h1 class="serif-text text-7xl md:text-9xl leading-[0.9] mb-8 tracking-tighter">
+                For designers and agents<br>in the era of AI.
+            </h1>
+            <p class="mx-auto text-sm text-neutral-400 font-medium tracking-wide mb-8 grotesk-text">
+                Where aesthetics can be searched, installed, and executed.
+            </p>
+            <!-- Figma URL → Generate Skill (hidden until feature is ready)
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-1">
+                <input type="text" placeholder="Paste Figma URL..." disabled class="w-full md:w-96 px-8 py-5 rounded-easel-button bg-neutral-100 border border-neutral-200 text-neutral-400 cursor-not-allowed font-medium grotesk-text">
+                <button disabled class="w-full md:w-auto px-10 py-5 bg-neutral-300 text-white rounded-easel-button font-bold grotesk-text uppercase tracking-widest cursor-not-allowed">
+                    Generate Skill
+                </button>
+            </div>
+            <p class="text-center grotesk-text text-[10px] text-neutral-400 font-medium tracking-widest italic">Coming soon...</p>
+            -->
+        </div>
+    </section>
+
+    <!-- Skills Leaderboard -->
+    <section class="pt-12 pb-20 px-6 bg-white rounded-t-easel shadow-[0_-20px_60px_rgba(0,0,0,0.02)]">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-8 pb-4 border-b border-neutral-100">
+                <h2 class="serif-text text-4xl md:text-5xl">Skills Leaderboard</h2>
+                <span class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest hidden md:block">Global Ranking &bull; Real-time</span>
+            </div>
+
+            <div class="space-y-1">
+                <!-- Row 0: VaporAviator Easel Style (Highlighted) -->
+                <div class="group flex items-center justify-between p-4 bg-white rounded-2xl transition-colors cursor-pointer hover:bg-neutral-50 relative studio-pick-glow" onclick="location.href='skill-detail.html?id=vaporaviator/easel-style'">
+                    <div class="absolute top-2 right-4 grotesk-text text-[8px] font-bold uppercase tracking-[0.3em] text-neutral-400">★ Studio Pick</div>
+                    <div class="flex items-center gap-6">
+                        <span class="grotesk-text font-bold text-neutral-300 w-4">01</span>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center text-white font-bold serif-text text-lg italic">E</div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <h4 class="grotesk-text font-bold text-sm">VaporAviator Easel Style</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-black text-white">Aesthetic</span>
+                                </div>
+                                <p class="text-[10px] text-neutral-400 font-medium">vaporaviator/easel-style</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-8 md:gap-12">
+                        <div class="text-right hidden md:block">
+                            <span class="block grotesk-text font-bold text-sm">312.8K</span>
+                            <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase">Installs</span>
+                        </div>
+                        <div class="install-tip">
+                            <div class="install-btn w-24 h-8 bg-neutral-100 rounded-full flex items-center justify-center grotesk-text text-[10px] font-bold uppercase tracking-widest group-hover:bg-black group-hover:text-white transition-colors" data-path="vaporaviator/easel-style">Install</div>
+                            <span class="tip-content grotesk-text normal-case tracking-normal">
+                                <span class="block text-[10px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">npx hub add ...</code></span>
+                                Paste in Terminal, Claude, or Cursor chat
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Vercel React Best Practices -->
+                <div class="group flex items-center justify-between p-4 hover:bg-neutral-50 rounded-2xl transition-colors cursor-pointer" onclick="location.href='skill-detail.html?id=vercel-labs/vercel-react-best-practices'">
+                    <div class="flex items-center gap-6">
+                        <span class="grotesk-text font-bold text-neutral-300 w-4">02</span>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-neutral-200 rounded-lg flex items-center justify-center text-black">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 22.525H0L12 1.475L24 22.525Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <h4 class="grotesk-text font-bold text-sm">Vercel React Best Practices</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-neutral-100 text-neutral-500">Engineering</span>
+                                </div>
+                                <p class="text-[10px] text-neutral-400 font-medium">vercel-labs/vercel-react-best-practices</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-8 md:gap-12">
+                        <div class="text-right hidden md:block">
+                            <span class="block grotesk-text font-bold text-sm">197.3K</span>
+                            <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase">Installs</span>
+                        </div>
+                        <div class="install-tip">
+                            <div class="install-btn w-24 h-8 bg-neutral-100 rounded-full flex items-center justify-center grotesk-text text-[10px] font-bold uppercase tracking-widest group-hover:bg-black group-hover:text-white transition-colors" data-path="vercel-labs/vercel-react-best-practices">Install</div>
+                            <span class="tip-content grotesk-text normal-case tracking-normal">
+                                <span class="block text-[10px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">npx hub add ...</code></span>
+                                Paste in Terminal, Claude, or Cursor chat
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Web Design Guidelines -->
+                <div class="group flex items-center justify-between p-4 hover:bg-neutral-50 rounded-2xl transition-colors cursor-pointer" onclick="location.href='skill-detail.html?id=vercel-labs/web-design-guidelines'">
+                    <div class="flex items-center gap-6">
+                        <span class="grotesk-text font-bold text-neutral-300 w-4">03</span>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-neutral-200 rounded-lg flex items-center justify-center text-black">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 22.525H0L12 1.475L24 22.525Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <h4 class="grotesk-text font-bold text-sm">Web Design Guidelines</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-neutral-100 text-neutral-500">Engineering</span>
+                                </div>
+                                <p class="text-[10px] text-neutral-400 font-medium">vercel-labs/web-design-guidelines</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-8 md:gap-12">
+                        <div class="text-right hidden md:block">
+                            <span class="block grotesk-text font-bold text-sm">154.8K</span>
+                            <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase">Installs</span>
+                        </div>
+                        <div class="install-tip">
+                            <div class="install-btn w-24 h-8 bg-neutral-100 rounded-full flex items-center justify-center grotesk-text text-[10px] font-bold uppercase tracking-widest group-hover:bg-black group-hover:text-white transition-colors" data-path="vercel-labs/web-design-guidelines">Install</div>
+                            <span class="tip-content grotesk-text normal-case tracking-normal">
+                                <span class="block text-[10px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">npx hub add ...</code></span>
+                                Paste in Terminal, Claude, or Cursor chat
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Frontend Design -->
+                <div class="group flex items-center justify-between p-4 hover:bg-neutral-50 rounded-2xl transition-colors cursor-pointer" onclick="location.href='skill-detail.html?id=anthropics/frontend-design'">
+                    <div class="flex items-center gap-6">
+                        <span class="grotesk-text font-bold text-neutral-300 w-4">04</span>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center text-orange-600 font-bold text-xs">FD</div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <h4 class="grotesk-text font-bold text-sm">Frontend Design</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-black text-white">Aesthetic</span>
+                                </div>
+                                <p class="text-[10px] text-neutral-400 font-medium">anthropics/frontend-design</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-8 md:gap-12">
+                        <div class="text-right hidden md:block">
+                            <span class="block grotesk-text font-bold text-sm">143.7K</span>
+                            <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase">Installs</span>
+                        </div>
+                        <div class="install-tip">
+                            <div class="install-btn w-24 h-8 bg-neutral-100 rounded-full flex items-center justify-center grotesk-text text-[10px] font-bold uppercase tracking-widest group-hover:bg-black group-hover:text-white transition-colors" data-path="anthropics/frontend-design">Install</div>
+                            <span class="tip-content grotesk-text normal-case tracking-normal">
+                                <span class="block text-[10px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">npx hub add ...</code></span>
+                                Paste in Terminal, Claude, or Cursor chat
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 5: Sleek Design -->
+                <div class="group flex items-center justify-between p-4 hover:bg-neutral-50 rounded-2xl transition-colors cursor-pointer" onclick="location.href='skill-detail.html?id=sleekdotdesign/sleek-design-mobile-apps'">
+                    <div class="flex items-center gap-6">
+                        <span class="grotesk-text font-bold text-neutral-300 w-4">05</span>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-pink-50 rounded-lg flex items-center justify-center text-pink-600 font-bold text-xs">SD</div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <h4 class="grotesk-text font-bold text-sm">Sleek Design</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-black text-white">Aesthetic</span>
+                                </div>
+                                <p class="text-[10px] text-neutral-400 font-medium">sleekdotdesign/sleek-design-mobile-apps</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-8 md:gap-12">
+                        <div class="text-right hidden md:block">
+                            <span class="block grotesk-text font-bold text-sm">122.5K</span>
+                            <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase">Installs</span>
+                        </div>
+                        <div class="install-tip">
+                            <div class="install-btn w-24 h-8 bg-neutral-100 rounded-full flex items-center justify-center grotesk-text text-[10px] font-bold uppercase tracking-widest group-hover:bg-black group-hover:text-white transition-colors" data-path="sleekdotdesign/sleek-design-mobile-apps">Install</div>
+                            <span class="tip-content grotesk-text normal-case tracking-normal">
+                                <span class="block text-[10px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">npx hub add ...</code></span>
+                                Paste in Terminal, Claude, or Cursor chat
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 6: Impeccable -->
+                <div class="group flex items-center justify-between p-4 hover:bg-neutral-50 rounded-2xl transition-colors cursor-pointer" onclick="location.href='skill-detail.html?id=pbakaus/impeccable'">
+                    <div class="flex items-center gap-6">
+                        <span class="grotesk-text font-bold text-neutral-300 w-4">06</span>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center text-yellow-600 font-bold text-xs">IM</div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <h4 class="grotesk-text font-bold text-sm">Impeccable</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-black text-white">Aesthetic</span>
+                                </div>
+                                <p class="text-[10px] text-neutral-400 font-medium">pbakaus/impeccable</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-8 md:gap-12">
+                        <div class="text-right hidden md:block">
+                            <span class="block grotesk-text font-bold text-sm">85.2K</span>
+                            <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase">Installs</span>
+                        </div>
+                        <div class="install-tip">
+                            <div class="install-btn w-24 h-8 bg-neutral-100 rounded-full flex items-center justify-center grotesk-text text-[10px] font-bold uppercase tracking-widest group-hover:bg-black group-hover:text-white transition-colors" data-path="pbakaus/impeccable">Install</div>
+                            <span class="tip-content grotesk-text normal-case tracking-normal">
+                                <span class="block text-[10px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">npx hub add ...</code></span>
+                                Paste in Terminal, Claude, or Cursor chat
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-10 text-center">
+                <a href="skills.html" class="inline-block px-10 py-4 bg-black text-white rounded-easel-button grotesk-text text-[11px] font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors">View All Skills &rarr;</a>
+            </div>
+
+            <!-- Aesthetic vs Engineering Explainer -->
+            <div class="mt-24 rounded-[48px] p-10 md:p-14" style="background:rgba(157,132,186,0.45)">
+            <div class="text-center mb-12">
+                <h3 class="serif-text text-3xl md:text-4xl italic mb-3">Two types of skills, one ecosystem.</h3>
+                <p class="grotesk-text text-sm text-neutral-600 font-medium">Browse and install the skills you need — whether you design or develop.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Aesthetic Skills -->
+                <div class="p-10 bg-white rounded-easel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="px-3 py-1.5 bg-black text-white rounded-full grotesk-text text-[10px] font-bold uppercase tracking-widest">Aesthetic Skills</div>
+                        <span class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest">For Designers</span>
+                    </div>
+                    <h3 class="serif-text text-3xl mb-4 italic">Visual DNA for AI</h3>
+                    <p class="text-neutral-500 text-sm leading-relaxed font-medium mb-6">
+                        Aesthetic skills encode your design language &mdash; colors, typography, spacing, radii, and visual identity &mdash; into executable instructions that AI agents can apply to any project.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-black flex items-center justify-center"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                            <span class="text-sm font-medium">Design Systems &amp; Brand Identity</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-black flex items-center justify-center"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                            <span class="text-sm font-medium">Motion &amp; Animation Principles</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-black flex items-center justify-center"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                            <span class="text-sm font-medium">Layout Patterns &amp; Grid Systems</span>
+                        </div>
+                    </div>
+                    <p class="mt-6 text-[10px] text-neutral-400 grotesk-text font-bold uppercase tracking-widest italic">No coding required &mdash; extract from Figma</p>
+                </div>
+
+                <!-- Engineering Skills -->
+                <div class="p-10 bg-neutral-900 rounded-easel text-white">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="px-3 py-1.5 bg-white text-black rounded-full grotesk-text text-[10px] font-bold uppercase tracking-widest">Engineering Skills</div>
+                        <span class="grotesk-text text-[10px] font-bold text-neutral-500 uppercase tracking-widest">For Developers</span>
+                    </div>
+                    <h3 class="serif-text text-3xl mb-4 italic">Code Standards for AI</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed font-medium mb-6">
+                        Engineering skills define code architecture, framework best practices, performance rules, and accessibility standards that AI agents follow when building.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-white flex items-center justify-center"><svg class="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                            <span class="text-sm font-medium">Framework &amp; Performance Rules</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-white flex items-center justify-center"><svg class="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                            <span class="text-sm font-medium">Accessibility &amp; A11y Audits</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-white flex items-center justify-center"><svg class="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                            <span class="text-sm font-medium">Component Architecture Specs</span>
+                        </div>
+                    </div>
+                    <p class="mt-6 text-[10px] text-neutral-500 grotesk-text font-bold uppercase tracking-widest italic">Define once &mdash; every agent follows</p>
+                </div>
+            </div>
+            </div>
+
+            <!-- Terminal Demo: How it works -->
+            <div class="mt-32">
+                <h3 class="serif-text text-3xl text-center mb-2 italic">See it in action</h3>
+                <p class="text-center grotesk-text text-xs text-neutral-400 font-bold uppercase tracking-widest mb-8">An agent applying an Aesthetic Skill</p>
+                <div class="max-w-4xl mx-auto bg-neutral-900 rounded-[32px] p-2 border-4 border-neutral-100 shadow-2xl overflow-hidden">
+                    <div class="flex items-center gap-2 px-4 py-3 bg-neutral-800 rounded-t-2xl">
+                        <div class="w-2.5 h-2.5 bg-red-500 rounded-full"></div>
+                        <div class="w-2.5 h-2.5 bg-yellow-500 rounded-full"></div>
+                        <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+                        <span class="ml-4 grotesk-text text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Agent Live Action: Applying Aesthetic</span>
+                    </div>
+                    <div class="p-8 font-mono text-xs text-neutral-300 leading-relaxed min-h-[200px]">
+                        <p class="text-green-400 mb-2">> npx hub add anthropics/frontend-design</p>
+                        <p class="text-neutral-500 italic mb-4">Fetching visual DNA from Design Skills Hub...</p>
+                        <p class="mb-1 text-white animate-pulse">&bull; Loading distinctive typography system...</p>
+                        <p class="mb-1 text-white animate-pulse">&bull; Injecting cohesive palette + sharp accents...</p>
+                        <p class="mb-4 text-white animate-pulse">&bull; Mapping spatial composition rules...</p>
+                        <p class="text-green-400 font-bold">Successfully applied "Frontend Design" aesthetic (140ms).</p>
+                        <div class="mt-6 p-4 border border-neutral-700 rounded-xl bg-neutral-800/50 flex gap-4 items-center">
+                            <div class="w-12 h-12 bg-white rounded-xl shadow-inner"></div>
+                            <div>
+                                <div class="w-24 h-2 bg-neutral-600 rounded mb-2"></div>
+                                <div class="w-32 h-1 bg-neutral-700 rounded"></div>
+                            </div>
+                            <div class="ml-auto flex gap-1">
+                                <div class="w-8 h-4 bg-black rounded-full border border-neutral-600"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="mt-24 p-16 bg-neutral-900 rounded-easel text-center text-white overflow-hidden relative">
+                <div class="relative z-10">
+                    <h2 class="serif-text text-5xl md:text-6xl mb-6">Ready to empower your agents?</h2>
+                    <p class="grotesk-text text-neutral-400 uppercase tracking-[0.2em] text-xs font-bold mb-10">Join the waitlist for professional design skills</p>
+                    <a href="submit.html" class="bg-white text-black px-12 py-5 rounded-easel-button font-bold grotesk-text uppercase tracking-widest hover:bg-neutral-200 transition-colors inline-block">Submit Your Skill</a>
+                </div>
+                <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-white opacity-5 rounded-full blur-3xl"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 px-6 grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <span>&copy; 2026 Design Skills Hub &bull; By VaporAviator Labs</span>
+            <div class="flex gap-8">
+                <a href="https://x.com/VaporAviatorLab" target="_blank" class="hover:text-black transition-colors">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-black text-white px-8 py-4 rounded-full grotesk-text text-xs font-bold uppercase tracking-widest shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-[70]"></div>
+
+    <script>
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.remove('opacity-0','pointer-events-none');
+            t.classList.add('opacity-100');
+            setTimeout(() => { t.classList.add('opacity-0','pointer-events-none'); t.classList.remove('opacity-100'); }, 2500);
+        }
+        function installSkill(path, e) {
+            if (e) { e.stopPropagation(); e.preventDefault(); }
+            navigator.clipboard.writeText('npx hub add ' + path).then(() => showToast('Copied: npx hub add ' + path));
+        }
+        // Install buttons with tooltip
+        document.querySelectorAll('.install-btn').forEach(btn => {
+            btn.style.cursor = 'pointer';
+            btn.addEventListener('click', e => installSkill(btn.dataset.path, e));
+        });
+        // Install Hub Modal
+        function openInstallModal() {
+            document.getElementById('install-modal').classList.remove('modal-hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeInstallModal() {
+            document.getElementById('install-modal').classList.add('modal-hidden');
+            document.body.style.overflow = '';
+        }
+        function copyCommand(cmd, el) {
+            navigator.clipboard.writeText(cmd).then(() => {
+                const feedback = el.querySelector('.copy-feedback');
+                const icon = el.querySelector('.copy-icon');
+                if (feedback) {
+                    feedback.classList.add('show');
+                    if (icon) icon.style.display = 'none';
+                    setTimeout(() => { feedback.classList.remove('show'); if (icon) icon.style.display = ''; }, 1800);
+                }
+                if (typeof showToast === 'function') showToast('Copied to clipboard');
+            });
+        }
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeInstallModal(); });
+    </script>
+
+    <!-- Install Hub Modal -->
+    <div id="install-modal" class="modal-hidden fixed inset-0 z-[80] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeInstallModal()"></div>
+        <div class="modal-panel relative bg-white rounded-easel max-w-lg w-full p-10 md:p-12 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeInstallModal()" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors" aria-label="Close">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="mb-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    </div>
+                    <h2 class="serif-text text-3xl md:text-4xl italic">Install the Hub</h2>
+                </div>
+                <p class="text-neutral-500 text-sm font-medium leading-relaxed">One command connects all your AI agents to the full skill registry.</p>
+            </div>
+            <div class="mb-8">
+                <div class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Run in your terminal</div>
+                <div class="cmd-block bg-neutral-900 text-white rounded-2xl px-5 py-4 font-mono text-sm flex items-center justify-between" onclick="copyCommand('npx design-skills-hub', this)">
+                    <code>$ npx design-skills-hub</code>
+                    <span class="copy-feedback grotesk-text text-[10px] font-bold text-green-400 uppercase tracking-widest">Copied!</span>
+                    <svg class="w-4 h-4 text-neutral-500 hover:text-white transition-colors shrink-0 ml-4 copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </div>
+            </div>
+            <div class="p-5 bg-neutral-50 rounded-2xl border border-neutral-100 mb-8">
+                <div class="grotesk-text font-bold text-[10px] uppercase tracking-widest text-neutral-400 mb-3">What happens</div>
+                <div class="space-y-2.5 text-sm text-neutral-600 font-medium">
+                    <div class="flex items-start gap-3">
+                        <div class="w-5 h-5 rounded-full bg-black flex items-center justify-center shrink-0 mt-0.5"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                        <span>Detects all AI agents on your machine</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-5 h-5 rounded-full bg-black flex items-center justify-center shrink-0 mt-0.5"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                        <span>Connects them to the Hub skill registry</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-5 h-5 rounded-full bg-black flex items-center justify-center shrink-0 mt-0.5"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                        <span>Agents can now search, install, and execute any skill</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">Supported Agents</div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">&#x1F99E; OpenClaw</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Claude Code</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Cursor</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Windsurf</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">v0</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">ChatGPT</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Bolt</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">Lovable</span>
+                </div>
+            </div>
+            <div class="mt-8 pt-6 border-t border-neutral-100 text-center">
+                <a href="about.html" class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest hover:text-black transition-colors underline underline-offset-4">Read the full operating manual &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
