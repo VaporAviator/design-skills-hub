@@ -213,37 +213,6 @@
                     </section>
 
                     <section>
-                        <h2 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-6 italic">Quick Start</h2>
-                        <div class="space-y-5">
-                            <!-- Step 1 -->
-                            <div>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold grotesk-text shrink-0">1</span>
-                                    <span class="grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400">Install the skill</span>
-                                </div>
-                                <div class="relative group">
-                                    <pre class="grotesk-text font-medium">npx hub add vaporaviator/easel-style</pre>
-                                    <button class="absolute right-4 top-4 text-[10px] font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors" onclick="navigator.clipboard.writeText(document.querySelector('pre').innerText).then(()=>showToast('Command copied!'))">Copy</button>
-                                </div>
-                            </div>
-                            <!-- Step 2 -->
-                            <div>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold grotesk-text shrink-0">2</span>
-                                    <span class="grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400">Use with any agent</span>
-                                </div>
-                                <button class="w-full py-4 bg-neutral-900 text-white rounded-2xl grotesk-text font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-black transition-all flex items-center justify-center gap-3 shadow-lg" onclick="copyAgentContext()">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                                    Copy Prompt — Paste to Any Agent
-                                </button>
-                                <p class="text-center text-[10px] text-neutral-400 mt-2 font-medium">Copies a ready-to-use prompt. Paste into ChatGPT, Claude, Cursor, or any AI chat.</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <hr class="border-neutral-200">
-
-                    <section>
                         <h2 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-6 italic">Description</h2>
 
                         <!-- Summary (always shown) -->
@@ -318,6 +287,36 @@
                             <span class="block text-[10px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">npx hub add ...</code></span>
                             Paste in Terminal, Claude, or Cursor chat
                         </span>
+                    </div>
+                </div>
+
+                <!-- Quick Start Card -->
+                <div class="p-6 bg-white border border-neutral-100 rounded-easel">
+                    <h3 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-5 italic">Quick Start</h3>
+                    <div class="space-y-4">
+                        <!-- Step 1: Install -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-4 h-4 rounded-full bg-black text-white flex items-center justify-center text-[8px] font-bold grotesk-text shrink-0">1</span>
+                                <span class="grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400">Install</span>
+                            </div>
+                            <div class="relative group">
+                                <pre id="sidebar-install-cmd" class="grotesk-text font-medium text-xs !py-3 !px-4 !rounded-xl">npx hub add vaporaviator/easel-style</pre>
+                                <button class="absolute right-3 top-3 text-[9px] font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors grotesk-text" onclick="navigator.clipboard.writeText(document.getElementById('sidebar-install-cmd').innerText).then(()=>showToast('Command copied!'))">Copy</button>
+                            </div>
+                        </div>
+                        <!-- Step 2: Use -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-4 h-4 rounded-full bg-black text-white flex items-center justify-center text-[8px] font-bold grotesk-text shrink-0">2</span>
+                                <span class="grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400">Use with any agent</span>
+                            </div>
+                            <button class="w-full py-3 bg-neutral-900 text-white rounded-xl grotesk-text font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-black transition-all flex items-center justify-center gap-2 shadow-md" onclick="copyAgentContext()">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                Copy Prompt
+                            </button>
+                            <p class="text-center text-[9px] text-neutral-400 mt-1.5 font-medium">Paste into ChatGPT, Claude, Cursor, or any AI chat</p>
+                        </div>
                     </div>
                 </div>
 
@@ -582,7 +581,8 @@
 
             // Update title and heading
             document.querySelector('h1').innerText = data.name;
-            document.querySelector('pre').innerText = 'npx hub add ' + skillId;
+            const sidebarCmd = document.getElementById('sidebar-install-cmd');
+            if (sidebarCmd) sidebarCmd.innerText = 'npx hub add ' + skillId;
             document.getElementById('skill-intro').innerText = data.description;
 
             // Update description text
