@@ -1,0 +1,48 @@
+<svg width="64" height="64" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2d1a3e"/>
+      <stop offset="100%" stop-color="#070410"/>
+    </radialGradient>
+    <radialGradient id="nebula" cx="42%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#9d84ba" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="white"/>
+      <stop offset="45%" stop-color="#f0e8f8"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c4aed6" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#9d84ba" stop-opacity="0.7"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9d84ba" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <clipPath id="clip"><circle cx="100" cy="100" r="72"/></clipPath>
+    <filter id="blur-glow"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="blur-core"><feGaussianBlur stdDeviation="7"/></filter>
+  </defs>
+  <circle cx="100" cy="106" r="94" fill="url(#glow)" filter="url(#blur-glow)"/>
+  <circle cx="100" cy="100" r="72" fill="url(#bg)"/>
+  <g clip-path="url(#clip)">
+    <ellipse cx="88" cy="88" rx="72" ry="54" fill="url(#nebula)" transform="rotate(-15 88 88)"/>
+  </g>
+  <circle cx="100" cy="100" r="72" fill="none" stroke="url(#rim)" stroke-width="1.5" opacity="0.85"/>
+  <circle cx="100" cy="100" r="28" fill="url(#core)" filter="url(#blur-core)"/>
+  <circle cx="100" cy="100" r="8" fill="white"/>
+  <line x1="100" y1="66" x2="100" y2="86" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <line x1="100" y1="114" x2="100" y2="134" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <line x1="66" y1="100" x2="86" y2="100" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <line x1="114" y1="100" x2="134" y2="100" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <line x1="79" y1="79" x2="86" y2="86" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+  <line x1="121" y1="79" x2="114" y2="86" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+  <line x1="79" y1="121" x2="86" y2="114" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+  <line x1="121" y1="121" x2="114" y2="114" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+  <circle cx="100" cy="28" r="2.5" fill="#c4aed6" opacity="0.85"/>
+  <circle cx="172" cy="100" r="2.5" fill="#c4aed6" opacity="0.85"/>
+  <circle cx="100" cy="172" r="2.5" fill="#c4aed6" opacity="0.85"/>
+  <circle cx="28" cy="100" r="2.5" fill="#c4aed6" opacity="0.85"/>
+</svg>

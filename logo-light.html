@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { background: #f9f9f9; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: 'Space Grotesk', sans-serif; gap: 60px; flex-wrap: wrap; padding: 80px; box-sizing: border-box; }
+  .card { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .label { color: #bbb; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+  .desc { color: #888; font-size: 11px; font-weight: 500; text-align: center; max-width: 120px; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Option A: 深色球体原版，去掉光晕 — 像宝石 -->
+<div class="card">
+  <div class="label">Option A</div>
+  <svg width="120" height="120" viewBox="0 0 200 200" fill="none">
+    <defs>
+      <radialGradient id="a-bg" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#2d1a3e"/>
+        <stop offset="100%" stop-color="#070410"/>
+      </radialGradient>
+      <radialGradient id="a-n" cx="42%" cy="38%" r="65%">
+        <stop offset="0%" stop-color="#9d84ba" stop-opacity="0.7"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <radialGradient id="a-c" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="white"/>
+        <stop offset="45%" stop-color="#f0e8f8"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <linearGradient id="a-r" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#c4aed6" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#9d84ba" stop-opacity="0.7"/>
+      </linearGradient>
+      <clipPath id="a-cl"><circle cx="100" cy="100" r="72"/></clipPath>
+      <filter id="a-cf"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+    <!-- No outer glow — clean gem on white -->
+    <circle cx="100" cy="100" r="72" fill="url(#a-bg)"/>
+    <g clip-path="url(#a-cl)">
+      <ellipse cx="88" cy="88" rx="72" ry="54" fill="url(#a-n)" transform="rotate(-15 88 88)"/>
+    </g>
+    <circle cx="100" cy="100" r="72" fill="none" stroke="url(#a-r)" stroke-width="1.5" opacity="0.85"/>
+    <circle cx="100" cy="100" r="28" fill="url(#a-c)" filter="url(#a-cf)"/>
+    <circle cx="100" cy="100" r="8" fill="white"/>
+    <line x1="100" y1="66" x2="100" y2="86" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="114" x2="100" y2="134" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="66" y1="100" x2="86" y2="100" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="114" y1="100" x2="134" y2="100" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="79" y1="79" x2="86" y2="86" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <line x1="121" y1="79" x2="114" y2="86" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <line x1="79" y1="121" x2="86" y2="114" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <line x1="121" y1="121" x2="114" y2="114" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <circle cx="100" cy="28" r="2.5" fill="#c4aed6" opacity="0.9"/>
+    <circle cx="172" cy="100" r="2.5" fill="#c4aed6" opacity="0.9"/>
+    <circle cx="100" cy="172" r="2.5" fill="#c4aed6" opacity="0.9"/>
+    <circle cx="28" cy="100" r="2.5" fill="#c4aed6" opacity="0.9"/>
+  </svg>
+  <div class="desc">原版深色球，去掉光晕，干净宝石感</div>
+</div>
+
+<!-- Option B: 纯 #9D84BA 填充圆，白色内部细节 -->
+<div class="card">
+  <div class="label">Option B</div>
+  <svg width="120" height="120" viewBox="0 0 200 200" fill="none">
+    <defs>
+      <radialGradient id="b-bg" cx="38%" cy="32%" r="65%">
+        <stop offset="0%" stop-color="#b89fd4"/>
+        <stop offset="55%" stop-color="#9d84ba"/>
+        <stop offset="100%" stop-color="#7a6391"/>
+      </radialGradient>
+      <radialGradient id="b-shine" cx="34%" cy="28%" r="38%">
+        <stop offset="0%" stop-color="white" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="b-c" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="white" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="b-cf"><feGaussianBlur stdDeviation="5"/></filter>
+    </defs>
+    <circle cx="100" cy="100" r="76" fill="url(#b-bg)"/>
+    <circle cx="100" cy="100" r="76" fill="url(#b-shine)"/>
+    <circle cx="100" cy="100" r="26" fill="url(#b-c)" filter="url(#b-cf)"/>
+    <circle cx="100" cy="100" r="8" fill="white"/>
+    <line x1="100" y1="66" x2="100" y2="86" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+    <line x1="100" y1="114" x2="100" y2="134" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+    <line x1="66" y1="100" x2="86" y2="100" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+    <line x1="114" y1="100" x2="134" y2="100" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+    <line x1="79" y1="79" x2="86" y2="86" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+    <line x1="121" y1="79" x2="114" y2="86" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+    <line x1="79" y1="121" x2="86" y2="114" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+    <line x1="121" y1="121" x2="114" y2="114" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+    <circle cx="100" cy="24" r="2.5" fill="white" opacity="0.7"/>
+    <circle cx="176" cy="100" r="2.5" fill="white" opacity="0.7"/>
+    <circle cx="100" cy="176" r="2.5" fill="white" opacity="0.7"/>
+    <circle cx="24" cy="100" r="2.5" fill="white" opacity="0.7"/>
+  </svg>
+  <div class="desc">#9D84BA 实色球，白色光芒细节</div>
+</div>
+
+<!-- Option C: 描边/线框版，完全透明 -->
+<div class="card">
+  <div class="label">Option C</div>
+  <svg width="120" height="120" viewBox="0 0 200 200" fill="none">
+    <defs>
+      <linearGradient id="c-r" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#b89fd4"/>
+        <stop offset="100%" stop-color="#7a6391"/>
+      </linearGradient>
+      <radialGradient id="c-glow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#9d84ba" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <radialGradient id="c-inner" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#9d84ba" stop-opacity="0.08"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+    </defs>
+    <!-- Very subtle fill -->
+    <circle cx="100" cy="100" r="72" fill="url(#c-glow)"/>
+    <!-- Inner subtle fill -->
+    <circle cx="100" cy="100" r="48" fill="url(#c-inner)"/>
+    <!-- Stroke circle -->
+    <circle cx="100" cy="100" r="72" fill="none" stroke="url(#c-r)" stroke-width="2"/>
+    <!-- Inner ring -->
+    <circle cx="100" cy="100" r="48" fill="none" stroke="#9d84ba" stroke-width="0.8" opacity="0.4"/>
+    <!-- Core dot -->
+    <circle cx="100" cy="100" r="8" fill="#9d84ba"/>
+    <circle cx="100" cy="100" r="4" fill="#c4aed6"/>
+    <!-- Rays -->
+    <line x1="100" y1="62" x2="100" y2="86" stroke="#9d84ba" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="100" y1="114" x2="100" y2="138" stroke="#9d84ba" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="62" y1="100" x2="86" y2="100" stroke="#9d84ba" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="114" y1="100" x2="138" y2="100" stroke="#9d84ba" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="76" y1="76" x2="84" y2="84" stroke="#9d84ba" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+    <line x1="124" y1="76" x2="116" y2="84" stroke="#9d84ba" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+    <line x1="76" y1="124" x2="84" y2="116" stroke="#9d84ba" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+    <line x1="124" y1="124" x2="116" y2="116" stroke="#9d84ba" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+    <!-- Compass dots -->
+    <circle cx="100" cy="28" r="2.5" fill="#9d84ba" opacity="0.7"/>
+    <circle cx="172" cy="100" r="2.5" fill="#9d84ba" opacity="0.7"/>
+    <circle cx="100" cy="172" r="2.5" fill="#9d84ba" opacity="0.7"/>
+    <circle cx="28" cy="100" r="2.5" fill="#9d84ba" opacity="0.7"/>
+  </svg>
+  <div class="desc">透明描边版，极简线框，浅背景首选</div>
+</div>
+
+<!-- Option D: 深色球 + 浅色drop shadow，像印章 -->
+<div class="card">
+  <div class="label">Option D</div>
+  <svg width="120" height="120" viewBox="0 0 200 200" fill="none">
+    <defs>
+      <radialGradient id="d-bg" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#2d1a3e"/>
+        <stop offset="100%" stop-color="#070410"/>
+      </radialGradient>
+      <radialGradient id="d-n" cx="42%" cy="38%" r="65%">
+        <stop offset="0%" stop-color="#9d84ba" stop-opacity="0.7"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <radialGradient id="d-c" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="white"/>
+        <stop offset="45%" stop-color="#f0e8f8"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <linearGradient id="d-r" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#c4aed6" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#9d84ba" stop-opacity="0.7"/>
+      </linearGradient>
+      <clipPath id="d-cl"><circle cx="100" cy="100" r="72"/></clipPath>
+      <filter id="d-shadow">
+        <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#9d84ba" flood-opacity="0.25"/>
+      </filter>
+      <filter id="d-cf"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+    <!-- Drop shadow gives depth on light bg -->
+    <g filter="url(#d-shadow)">
+      <circle cx="100" cy="100" r="72" fill="url(#d-bg)"/>
+    </g>
+    <g clip-path="url(#d-cl)">
+      <ellipse cx="88" cy="88" rx="72" ry="54" fill="url(#d-n)" transform="rotate(-15 88 88)"/>
+    </g>
+    <circle cx="100" cy="100" r="72" fill="none" stroke="url(#d-r)" stroke-width="1.5" opacity="0.85"/>
+    <circle cx="100" cy="100" r="28" fill="url(#d-c)" filter="url(#d-cf)"/>
+    <circle cx="100" cy="100" r="8" fill="white"/>
+    <line x1="100" y1="66" x2="100" y2="86" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="114" x2="100" y2="134" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="66" y1="100" x2="86" y2="100" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="114" y1="100" x2="134" y2="100" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="79" y1="79" x2="86" y2="86" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <line x1="121" y1="79" x2="114" y2="86" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <line x1="79" y1="121" x2="86" y2="114" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <line x1="121" y1="121" x2="114" y2="114" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <circle cx="100" cy="28" r="2.5" fill="#c4aed6" opacity="0.9"/>
+    <circle cx="172" cy="100" r="2.5" fill="#c4aed6" opacity="0.9"/>
+    <circle cx="100" cy="172" r="2.5" fill="#c4aed6" opacity="0.9"/>
+    <circle cx="28" cy="100" r="2.5" fill="#c4aed6" opacity="0.9"/>
+  </svg>
+  <div class="desc">原版深色球 + 紫色 drop shadow，像宝石印章</div>
+</div>
+
+</body>
+</html>

@@ -7,3 +7,4 @@ node_modules/
 # Dev scripts
 *.py
 .claude/
+.env*.local

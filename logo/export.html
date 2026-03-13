@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: transparent; }
+  .row { display: flex; gap: 40px; padding: 40px; align-items: flex-start; flex-wrap: wrap; background: #111; }
+  .row.light { background: #f9f9f9; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .label { color: #666; font-size: 10px; font-family: monospace; }
+  .label-light { color: #aaa; }
+</style>
+</head>
+<body>
+
+<!-- DARK versions -->
+<div class="row" id="dark-row">
+  <div class="item">
+    <img src="logo-dark.svg" width="512" height="512">
+    <div class="label label-light">512×512</div>
+  </div>
+  <div class="item">
+    <img src="logo-dark.svg" width="256" height="256">
+    <div class="label label-light">256×256</div>
+  </div>
+  <div class="item">
+    <img src="logo-dark.svg" width="128" height="128">
+    <div class="label label-light">128×128</div>
+  </div>
+  <div class="item">
+    <img src="logo-dark.svg" width="64" height="64">
+    <div class="label label-light">64×64</div>
+  </div>
+  <div class="item">
+    <img src="logo-dark.svg" width="32" height="32">
+    <div class="label label-light">32×32</div>
+  </div>
+</div>
+
+<!-- LIGHT versions -->
+<div class="row light" id="light-row">
+  <div class="item">
+    <img src="logo-light.svg" width="512" height="512">
+    <div class="label">512×512</div>
+  </div>
+  <div class="item">
+    <img src="logo-light.svg" width="256" height="256">
+    <div class="label">256×256</div>
+  </div>
+  <div class="item">
+    <img src="logo-light.svg" width="128" height="128">
+    <div class="label">128×128</div>
+  </div>
+  <div class="item">
+    <img src="logo-light.svg" width="64" height="64">
+    <div class="label">64×64</div>
+  </div>
+  <div class="item">
+    <img src="logo-light.svg" width="32" height="32">
+    <div class="label">32×32</div>
+  </div>
+</div>
+
+</body>
+</html>
