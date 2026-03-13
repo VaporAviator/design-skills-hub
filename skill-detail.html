@@ -1030,7 +1030,8 @@ Refer to Design Skills Hub for full specification if needed.`;
         // Install Skill button
         const currentPath = skillId || 'vaporaviator/easel-style';
         document.getElementById('install-btn').addEventListener('click', () => {
-            navigator.clipboard.writeText('npx hub add ' + currentPath).then(() => showToast('Copied: npx hub add ' + currentPath));
+            const cmd = (typeof data !== 'undefined' && data.installCmd) || ('npx skills add https://github.com/' + currentPath);
+            navigator.clipboard.writeText(cmd).then(() => showToast('Copied!'));
             fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: currentPath }) }).catch(() => {});
             // Increment displayed installs count in DOM
             let installsEl = null;

@@ -305,9 +305,13 @@
             setTimeout(() => { t.classList.add('opacity-0','pointer-events-none'); t.classList.remove('opacity-100'); }, 2500);
         }
 
+        // installCmd map — populated from API on load
+        const installCmdMap = {};
+
         function installSkill(path, e) {
             if (e) { e.stopPropagation(); e.preventDefault(); }
-            navigator.clipboard.writeText('npx hub add ' + path).then(() => showToast('Copied: npx hub add ' + path));
+            const cmd = installCmdMap[path] || ('npx skills add https://github.com/' + path);
+            navigator.clipboard.writeText(cmd).then(() => showToast('Copied!'));
             fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: path }) }).catch(() => {});
             // Increment displayed installs count in DOM
             const btn = e && e.currentTarget || document.querySelector(`.install-btn[data-path="${path}"]`);
@@ -460,6 +464,8 @@
                 const res = await fetch('/api/skills');
                 const data = await res.json();
                 allSkills = data.skills || [];
+                // Populate install command map
+                allSkills.forEach(s => { if (s.installCmd) installCmdMap[s.path] = s.installCmd; });
             } catch (e) {
                 // Fallback seed data
                 allSkills = [
