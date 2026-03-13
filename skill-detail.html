@@ -170,7 +170,7 @@
 
     <main class="pt-32 pb-20 px-6 max-w-7xl mx-auto">
         <!-- Breadcrumbs -->
-        <div class="flex items-center gap-2 grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-12">
+        <div class="flex items-center gap-2 grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-neutral-400 mb-12">
             <a href="index.html" class="hover:text-black">Directory</a>
             <span>/</span>
             <a id="breadcrumb-author" href="#" class="hover:text-black">Author</a>
@@ -215,15 +215,15 @@
                     </section>
 
                     <!-- Security Scan Card -->
-                    <section id="security-scan-card" class="p-5 bg-white border border-neutral-100 rounded-easel hidden">
+                    <section id="security-scan-card" class="p-6 md:p-8 bg-white border border-neutral-100 rounded-easel shadow-sm hidden">
                         <!-- Header: title + badge + date in one row -->
                         <div class="flex items-center gap-3 mb-4">
                             <h2 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 italic">Security Scan</h2>
-                            <span id="scan-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold grotesk-text bg-emerald-50 text-emerald-700">
+                            <span id="scan-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] md:text-[11px] font-bold grotesk-text bg-emerald-50 text-emerald-700">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"></path></svg>
                                 Passed
                             </span>
-                            <span id="scan-date" class="text-[10px] text-neutral-400 grotesk-text uppercase tracking-widest ml-auto">Mar 1, 2026</span>
+                            <span id="scan-date" class="text-[10px] md:text-[11px] text-neutral-400 grotesk-text uppercase tracking-widest ml-auto">Mar 1, 2026</span>
                         </div>
 
                         <!-- Permission Scope: 3 items in a horizontal row -->
@@ -293,11 +293,11 @@
                     
                     <!-- External Links -->
                     <div id="external-links" class="mt-10 grid grid-cols-2 gap-3">
-                        <a id="github-link" href="#" target="_blank" class="flex items-center justify-center gap-2 py-3 bg-neutral-100 rounded-full grotesk-text text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-200 transition-colors">
+                        <a id="github-link" href="#" target="_blank" class="flex items-center justify-center gap-2 py-3 bg-neutral-100 rounded-full grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest hover:bg-neutral-200 transition-colors">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                             <span id="github-label">GitHub</span>
                         </a>
-                        <a id="website-link" href="#" target="_blank" class="flex items-center justify-center gap-2 py-3 bg-neutral-100 rounded-full grotesk-text text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-200 transition-colors">
+                        <a id="website-link" href="#" target="_blank" class="flex items-center justify-center gap-2 py-3 bg-neutral-100 rounded-full grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest hover:bg-neutral-200 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"></path></svg>
                             Website
                         </a>
@@ -306,46 +306,46 @@
                     <div class="install-tip mt-6">
                         <button id="install-btn" class="w-full py-5 bg-black text-white rounded-easel-button font-bold grotesk-text uppercase tracking-widest hover:bg-neutral-800 transition-colors">Install Skill</button>
                         <span class="tip-content grotesk-text normal-case tracking-normal">
-                            <span class="block text-[10px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">npx hub add ...</code></span>
+                            <span class="block text-[11px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[11px]">npx hub add ...</code></span>
                             Paste in Terminal, Claude, or Cursor chat
                         </span>
                     </div>
                 </div>
 
                 <!-- Quick Start Card -->
-                <div class="p-6 bg-white border border-neutral-100 rounded-easel">
-                    <h3 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-5 italic">Quick Start</h3>
+                <div class="p-6 md:p-8 bg-white border border-neutral-100 rounded-easel shadow-sm">
+                    <h3 class="grotesk-text font-bold text-xs uppercase tracking-[0.2em] text-neutral-400 mb-6 italic">Quick Start</h3>
                     <div class="space-y-4">
                         <!-- Step 1: Install -->
                         <div>
                             <div class="flex items-center gap-2 mb-2">
-                                <span class="w-4 h-4 rounded-full bg-black text-white flex items-center justify-center text-[8px] font-bold grotesk-text shrink-0">1</span>
-                                <span class="grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400">Install</span>
+                                <span class="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[9px] md:text-[11px] font-bold grotesk-text shrink-0">1</span>
+                                <span class="grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-neutral-400">Install</span>
                             </div>
                             <div class="relative group">
                                 <pre id="sidebar-install-cmd" class="grotesk-text font-medium text-xs !py-3 !px-4 !rounded-xl">npx hub add vaporaviator/easel-style</pre>
-                                <button class="absolute right-3 top-3 text-[9px] font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors grotesk-text" onclick="navigator.clipboard.writeText(document.getElementById('sidebar-install-cmd').innerText).then(()=>showToast('Command copied!'))">Copy</button>
+                                <button class="absolute right-3 top-3 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors grotesk-text" onclick="navigator.clipboard.writeText(document.getElementById('sidebar-install-cmd').innerText).then(()=>showToast('Command copied!'))">Copy</button>
                             </div>
                         </div>
                         <!-- Step 2: Use -->
                         <div>
                             <div class="flex items-center gap-2 mb-2">
-                                <span class="w-4 h-4 rounded-full bg-black text-white flex items-center justify-center text-[8px] font-bold grotesk-text shrink-0">2</span>
-                                <span class="grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400">Use with any agent</span>
+                                <span class="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[9px] md:text-[11px] font-bold grotesk-text shrink-0">2</span>
+                                <span class="grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-neutral-400">Use with any agent</span>
                             </div>
-                            <button class="w-full py-3 bg-neutral-900 text-white rounded-xl grotesk-text font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-black transition-all flex items-center justify-center gap-2 shadow-md" onclick="copyAgentContext()">
+                            <button class="w-full py-3 bg-neutral-900 text-white rounded-xl grotesk-text font-bold text-[10px] md:text-[11px] uppercase tracking-[0.15em] hover:bg-black transition-all flex items-center justify-center gap-2 shadow-md" onclick="copyAgentContext()">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                                 Copy Prompt
                             </button>
-                            <p class="text-center text-[9px] text-neutral-400 mt-1.5 font-medium">Paste into Claude, Cursor, OpenClaw, or any AI chat</p>
+                            <p class="text-center text-[9px] md:text-[11px] text-neutral-400 mt-2 font-medium">Paste into Claude, Cursor, OpenClaw, or any AI chat</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="p-8 rounded-easel overflow-hidden relative" style="background:rgba(157,132,186,0.45)">
-                    <div class="px-3 py-1 rounded-full bg-white/70 inline-block mb-4 grotesk-text text-[10px] font-bold uppercase tracking-widest">Coming Soon</div>
+                    <div class="px-3 py-1.5 rounded-full bg-white/70 inline-block mb-4 grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest">Coming Soon</div>
                     <p class="serif-text text-2xl mb-6 italic">Generate your own Aesthetic Skills from Figma.</p>
-                    <a href="https://x.com/VaporAviatorLab" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-full grotesk-text text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors">
+                    <a href="https://x.com/VaporAviatorLab" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-full grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                         Follow for Updates
                     </a>
@@ -354,17 +354,17 @@
         </div>
 
         <!-- Preview Image -->
-        <div id="preview-section" class="w-full h-[300px] md:h-[500px] bg-neutral-200 rounded-3xl md:rounded-easel mt-12 md:mt-16 overflow-hidden relative group">
+        <div id="preview-section" class="w-full h-[300px] md:h-[500px] bg-neutral-200 rounded-3xl md:rounded-easel mt-16 md:mt-20 overflow-hidden relative group shadow-sm">
             <img id="preview-image" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Skill Preview">
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             <div class="absolute bottom-6 left-6 md:bottom-12 md:left-12 text-white">
-                <div class="px-4 py-2 bg-white/20 backdrop-blur-md rounded-full inline-block mb-4 grotesk-text text-[10px] font-bold uppercase tracking-widest">Visual DNA Preview</div>
+                <div class="px-4 py-2 bg-white/20 backdrop-blur-md rounded-full inline-block mb-4 grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest">Visual DNA Preview</div>
                 <h2 id="preview-title" class="serif-text text-2xl md:text-5xl italic">The Easel: Modern High-Contrast Dashboard Style</h2>
             </div>
         </div>
     </main>
 
-    <footer class="py-12 px-6 grotesk-text text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+    <footer class="py-16 px-6 grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-neutral-400">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <span>© 2026 Design Skills Hub • By VaporAviator Labs</span>
             <div class="flex gap-8">
@@ -777,7 +777,7 @@
             };
 
             const cfg = badgeConfigs[scan.status] || badgeConfigs.passed;
-            badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold grotesk-text ' + cfg.classes;
+            badge.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] md:text-[11px] font-bold grotesk-text ' + cfg.classes;
             badge.innerHTML = cfg.icon + ' ' + cfg.label;
 
             // Scan date
@@ -819,16 +819,16 @@
             permRows.innerHTML = scopes.map(scope => {
                 const sc = scopeConfigs[scope.name] || { icon: '', label: scope.name, hint: 'Detected' };
                 if (scope.detected) {
-                    return `<div class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-lg bg-amber-50 border border-amber-100 text-center">
+                    return `<div class="flex flex-col items-center gap-2 py-3.5 px-3 rounded-xl bg-amber-50 border border-amber-100 text-center">
                         <span class="text-amber-600">${sc.icon}</span>
-                        <span class="text-[10px] font-bold grotesk-text text-amber-700 leading-tight">${sc.label}</span>
-                        <span class="text-[9px] grotesk-text text-amber-500 leading-tight">${sc.hint}</span>
+                        <span class="text-[10px] md:text-[11px] font-bold grotesk-text text-amber-700 leading-tight">${sc.label}</span>
+                        <span class="text-[10px] md:text-[11px] grotesk-text text-amber-500 leading-tight">${sc.hint}</span>
                     </div>`;
                 } else {
-                    return `<div class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-lg bg-neutral-50 text-center">
+                    return `<div class="flex flex-col items-center gap-2 py-3.5 px-3 rounded-xl bg-neutral-50 text-center">
                         <span class="text-neutral-300">${sc.icon}</span>
-                        <span class="text-[10px] font-medium grotesk-text text-neutral-400 leading-tight">${sc.label}</span>
-                        <span class="text-[9px] grotesk-text text-neutral-300 leading-tight">None</span>
+                        <span class="text-[10px] md:text-[11px] font-medium grotesk-text text-neutral-400 leading-tight">${sc.label}</span>
+                        <span class="text-[10px] md:text-[11px] grotesk-text text-neutral-300 leading-tight">None</span>
                     </div>`;
                 }
             }).join('');
@@ -848,14 +848,14 @@
                     dimsEl.innerHTML = scan.dimensions.filter(d => d.status !== 'pass').map(dim => {
                         const sc = statusColors[dim.status] || statusColors.warning;
                         const flagsHtml = (dim.flags && dim.flags.length > 0)
-                            ? ` <span class="text-[10px] text-neutral-400 font-mono">${dim.flags.slice(0, 2).join(', ')}${dim.flags.length > 2 ? ' +' + (dim.flags.length - 2) : ''}</span>`
+                            ? ` <span class="text-[11px] text-neutral-400 font-mono">${dim.flags.slice(0, 2).join(', ')}${dim.flags.length > 2 ? ' +' + (dim.flags.length - 2) : ''}</span>`
                             : '';
-                        return `<div class="flex items-center justify-between py-1.5">
-                            <div class="flex items-center gap-1.5">
+                        return `<div class="flex items-center justify-between py-2">
+                            <div class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full ${sc.dot}"></span>
-                                <span class="text-[11px] font-medium grotesk-text text-neutral-600">${dim.name}</span>${flagsHtml}
+                                <span class="text-[11px] md:text-xs font-medium grotesk-text text-neutral-600">${dim.name}</span>${flagsHtml}
                             </div>
-                            <span class="text-[10px] font-bold uppercase tracking-widest ${sc.text} grotesk-text">${sc.label}</span>
+                            <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-widest ${sc.text} grotesk-text">${sc.label}</span>
                         </div>`;
                     }).join('');
                 }
@@ -1008,15 +1008,15 @@ Refer to Design Skills Hub for full specification if needed.`;
                 <p class="text-neutral-500 text-sm font-medium leading-relaxed">One command connects all your AI agents to the full skill registry.</p>
             </div>
             <div class="mb-8">
-                <div class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Run in your terminal</div>
+                <div class="grotesk-text text-[10px] md:text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Run in your terminal</div>
                 <div class="cmd-block bg-neutral-900 text-white rounded-2xl px-5 py-4 font-mono text-sm flex items-center justify-between" onclick="copyCommand('npx design-skills-hub', this)">
                     <code>$ npx design-skills-hub</code>
-                    <span class="copy-feedback grotesk-text text-[10px] font-bold text-green-400 uppercase tracking-widest">Copied!</span>
+                    <span class="copy-feedback grotesk-text text-[11px] font-bold text-green-400 uppercase tracking-widest">Copied!</span>
                     <svg class="w-4 h-4 text-neutral-500 hover:text-white transition-colors shrink-0 ml-4 copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 </div>
             </div>
             <div class="p-5 bg-neutral-50 rounded-2xl border border-neutral-100 mb-8">
-                <div class="grotesk-text font-bold text-[10px] uppercase tracking-widest text-neutral-400 mb-3">What happens</div>
+                <div class="grotesk-text font-bold text-[10px] md:text-[11px] uppercase tracking-widest text-neutral-400 mb-3">What happens</div>
                 <div class="space-y-2.5 text-sm text-neutral-600 font-medium">
                     <div class="flex items-start gap-3">
                         <div class="w-5 h-5 rounded-full bg-black flex items-center justify-center shrink-0 mt-0.5"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
@@ -1033,7 +1033,7 @@ Refer to Design Skills Hub for full specification if needed.`;
                 </div>
             </div>
             <div>
-                <div class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">Supported Agents</div>
+                <div class="grotesk-text text-[10px] md:text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-4">Supported Agents</div>
                 <div class="flex flex-wrap gap-2">
                     <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold">&#x1F99E; OpenClaw</span>
                     <span class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full grotesk-text text-[11px] font-bold"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2v-6h2v6zm0-8H9V7h6v2z"/></svg> Claude Code</span>
@@ -1047,7 +1047,7 @@ Refer to Design Skills Hub for full specification if needed.`;
                 </div>
             </div>
             <div class="mt-8 pt-6 border-t border-neutral-100 text-center">
-                <a href="about.html" class="grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest hover:text-black transition-colors underline underline-offset-4">Read the full operating manual &rarr;</a>
+                <a href="about.html" class="grotesk-text text-[10px] md:text-[11px] font-bold text-neutral-400 uppercase tracking-widest hover:text-black transition-colors underline underline-offset-4">Read the full operating manual &rarr;</a>
             </div>
         </div>
     </div>
