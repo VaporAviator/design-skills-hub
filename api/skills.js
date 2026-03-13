@@ -1,6 +1,6 @@
 const SEED_SKILLS = [
   {
-    id: 's00', name: 'VaporAviator Easel Style', path: 'vaporaviator/easel-style', installs: '28.6K', color: 'bg-black', icon: 'E', type: 'Aesthetic', avatar: 'https://unavatar.io/twitter/VaporAviator', description: 'Modern high-contrast aesthetic — Instrument Serif + Space Grotesk, monochrome palette, 40px radius system.', github: 'https://github.com/VaporAviator/easel-style', website: '', stars: '9.7K', highlighted: true,
+    id: 's00', name: 'VaporAviator Easel Style', path: 'vaporaviator/easel-style', installs: '16.8K', color: 'bg-black', icon: 'E', type: 'Aesthetic', avatar: 'https://unavatar.io/twitter/VaporAviator', description: 'Modern high-contrast aesthetic — Instrument Serif + Space Grotesk, monochrome palette, 40px radius system.', github: 'https://github.com/VaporAviator/easel-style', website: '', stars: '9.7K', highlighted: true,
     securityScan: { status: 'passed', scannedAt: '2026-03-12T23:11:52.514Z', source: 'SKILL.md', dimensions: [{ name: 'Code Injection', status: 'pass', flags: [] }, { name: 'Data Exfiltration', status: 'pass', flags: [] }, { name: 'Credential Access', status: 'pass', flags: [] }, { name: 'File System Risk', status: 'pass', flags: [] }, { name: 'Network & Persistence', status: 'pass', flags: [] }], permissionScopes: [{ name: 'File System Write', detected: false, flags: [] }, { name: 'Network Access', detected: false, flags: [] }, { name: 'Env Variable Access', detected: false, flags: [] }] },
   },
   {
