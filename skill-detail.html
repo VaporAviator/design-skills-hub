@@ -416,6 +416,12 @@
                 font1: 'Poppins', font1Label: 'Brand Heading System',
                 font2: 'Lora', font2Label: 'Brand Body System'
             },
+            'VaporAviator/vaporaviator-lab-style': {
+                colors: ['#050505','#9d84ba','#171717'],
+                labels: ['Background','Accent Purple','Surface'],
+                font1: 'Space Grotesk', font1Label: 'Headline & UI System',
+                font2: 'Inter', font2Label: 'Body & Description System'
+            },
             'anthropics/theme-factory': {
                 colors: ['#1A1A2E','#E94560','#F5F5F5'],
                 labels: ['Deep Navy','Vivid Red','Surface'],
@@ -639,6 +645,14 @@
                 }
             } catch(e) {
                 console.error('Failed to fetch skill data:', e);
+            }
+
+            // Fallback: if securityScan still missing, call scan API directly
+            if (!data.securityScan) {
+                try {
+                    const scanRes = await fetch('/api/security-scan?path=' + encodeURIComponent(skillId));
+                    if (scanRes.ok) data.securityScan = await scanRes.json();
+                } catch(_) {}
             }
 
             // Final fallback for unknown skills

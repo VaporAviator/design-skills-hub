@@ -70,7 +70,15 @@ module.exports = async function handler(req, res) {
       skill.securityScan = { status: 'passed', scannedAt: new Date().toISOString(), note: 'No SKILL.md/README.md found to scan' };
     }
   } catch (_) {
-    skill.securityScan = { status: 'passed', scannedAt: new Date().toISOString(), note: 'Scan skipped due to fetch error' };
+    skill.securityScan = {
+      status: 'passed', scannedAt: new Date().toISOString(), note: 'Scan skipped due to fetch error',
+      dimensions: [],
+      permissionScopes: [
+        { name: 'File System Write', detected: false, flags: [] },
+        { name: 'Network Access', detected: false, flags: [] },
+        { name: 'Env Variable Access', detected: false, flags: [] }
+      ]
+    };
   }
 
   try {
