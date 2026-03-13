@@ -308,6 +308,7 @@
         function installSkill(path, e) {
             if (e) { e.stopPropagation(); e.preventDefault(); }
             navigator.clipboard.writeText('npx hub add ' + path).then(() => showToast('Copied: npx hub add ' + path));
+            fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: path }) }).catch(() => {});
         }
 
         // Parse install count string to number for sorting

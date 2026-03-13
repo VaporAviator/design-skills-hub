@@ -526,6 +526,8 @@
         function installSkill(path, e) {
             if (e) { e.stopPropagation(); e.preventDefault(); }
             navigator.clipboard.writeText('npx hub add ' + path).then(() => showToast('Copied: npx hub add ' + path));
+            // Track install click (fire-and-forget, silent fail)
+            fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: path }) }).catch(() => {});
         }
         // Install buttons with tooltip
         document.querySelectorAll('.install-btn').forEach(btn => {

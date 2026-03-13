@@ -256,7 +256,7 @@
                             </div>
                             <article id="readme-content" class="skill-readme hidden"></article>
                             <div id="readme-toggle" class="hidden mt-4">
-                                <button id="readme-toggle-btn" class="grotesk-text text-xs font-bold uppercase tracking-[0.2em] text-neutral-400 hover:text-black transition-colors" onclick="toggleReadmeExpand()">Show More</button>
+                                <button id="readme-toggle-btn" class="grotesk-text text-xs font-bold uppercase tracking-[0.2em] text-neutral-500 hover:text-black transition-colors border border-neutral-200 rounded-full px-4 py-1.5" onclick="toggleReadmeExpand()">Show More</button>
                             </div>
                             <div id="readme-source" class="hidden mt-4 pt-4 border-t border-neutral-100">
                                 <a id="readme-source-link" href="#" target="_blank" rel="noopener noreferrer" class="grotesk-text text-xs font-bold uppercase tracking-[0.2em] text-neutral-400 hover:text-black transition-colors inline-flex items-center gap-1">
@@ -962,6 +962,7 @@ Refer to Design Skills Hub for full specification if needed.`;
         const currentPath = skillId || 'vaporaviator/easel-style';
         document.getElementById('install-btn').addEventListener('click', () => {
             navigator.clipboard.writeText('npx hub add ' + currentPath).then(() => showToast('Copied: npx hub add ' + currentPath));
+            fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: currentPath }) }).catch(() => {});
         });
 
         // Copy button in Quick Start — handled by inline onclick on the button
