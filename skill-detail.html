@@ -306,7 +306,7 @@
                     <div class="install-tip mt-6">
                         <button id="install-btn" class="w-full py-5 bg-black text-white rounded-easel-button font-bold grotesk-text uppercase tracking-widest hover:bg-neutral-800 transition-colors">Install Skill</button>
                         <span class="tip-content grotesk-text normal-case tracking-normal">
-                            <span class="block text-[11px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[11px]">npx hub add ...</code></span>
+                            <span class="block text-[11px] mb-1">Copies <code class="bg-white/20 px-1.5 py-0.5 rounded text-[11px]">npx skills add ...</code></span>
                             Paste in Terminal, Claude, or Cursor chat
                         </span>
                     </div>
@@ -323,7 +323,7 @@
                                 <span class="grotesk-text text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-neutral-400">Install</span>
                             </div>
                             <div class="relative group">
-                                <pre id="sidebar-install-cmd" class="grotesk-text font-medium text-xs !py-3 !px-4 !rounded-xl">npx hub add vaporaviator/easel-style</pre>
+                                <pre id="sidebar-install-cmd" class="grotesk-text font-medium text-xs !py-3 !px-4 !rounded-xl">npx skills add https://github.com/VaporAviator/easel-style</pre>
                                 <button class="absolute right-3 top-3 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors grotesk-text" onclick="navigator.clipboard.writeText(document.getElementById('sidebar-install-cmd').innerText).then(()=>showToast('Command copied!'))">Copy</button>
                             </div>
                         </div>
@@ -673,7 +673,7 @@
             // Update title and heading
             document.querySelector('h1').innerText = data.name;
             const sidebarCmd = document.getElementById('sidebar-install-cmd');
-            if (sidebarCmd) sidebarCmd.innerText = 'npx hub add ' + skillId;
+            if (sidebarCmd) sidebarCmd.innerText = data.installCmd || ('npx skills add https://github.com/' + skillId);
             document.getElementById('skill-intro').innerText = data.description;
 
             // Update description text
