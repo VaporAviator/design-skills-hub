@@ -528,6 +528,17 @@
             navigator.clipboard.writeText('npx hub add ' + path).then(() => showToast('Copied: npx hub add ' + path));
             // Track install click (fire-and-forget, silent fail)
             fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: path }) }).catch(() => {});
+            // Increment displayed installs count in DOM
+            const btn = e && e.currentTarget || document.querySelector(`.install-btn[data-path="${path}"]`);
+            if (btn) {
+                const countSpan = btn.closest('.install-tip')?.previousElementSibling?.querySelector('span:first-child');
+                if (countSpan) {
+                    const raw = countSpan.textContent.trim();
+                    const num = parseFloat(raw.replace(/K$/,'')) * (raw.endsWith('K') ? 1000 : 1);
+                    const next = Math.round(num + 1);
+                    countSpan.textContent = next >= 1000 ? (next / 1000).toFixed(1).replace(/\.0$/,'') + 'K' : String(next);
+                }
+            }
         }
         // Install buttons with tooltip
         document.querySelectorAll('.install-btn').forEach(btn => {

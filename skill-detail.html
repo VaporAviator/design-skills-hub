@@ -1035,6 +1035,18 @@ Refer to Design Skills Hub for full specification if needed.`;
         document.getElementById('install-btn').addEventListener('click', () => {
             navigator.clipboard.writeText('npx hub add ' + currentPath).then(() => showToast('Copied: npx hub add ' + currentPath));
             fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: currentPath }) }).catch(() => {});
+            // Increment displayed installs count in DOM
+            let installsEl = null;
+            document.querySelectorAll('.space-y-6 .flex.justify-between').forEach(row => {
+                const label = row.querySelector('.text-neutral-400');
+                if (label && label.textContent.trim() === 'Installs') installsEl = row.querySelector('.text-sm.font-bold');
+            });
+            if (installsEl) {
+                const raw = installsEl.textContent.trim().replace(/,/g, '');
+                const num = parseFloat(raw.replace(/K$/,'')) * (raw.endsWith('K') ? 1000 : 1);
+                const next = Math.round(num + 1);
+                installsEl.textContent = next >= 1000 ? (next / 1000).toFixed(1).replace(/\.0$/,'') + 'K' : String(next);
+            }
         });
 
         // Copy button in Quick Start — handled by inline onclick on the button
