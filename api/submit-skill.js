@@ -1,6 +1,70 @@
 const securityScan = require('./security-scan');
 const { scanContent, fetchSkillContent } = securityScan;
 
+// Known font names to detect in SKILL.md content
+const KNOWN_FONTS = [
+  'Inter','Space Grotesk','Instrument Serif','DM Sans','Satoshi','Geist',
+  'Fraunces','Playfair Display','Cormorant Garamond','Source Sans Pro',
+  'Plus Jakarta Sans','Sora','Outfit','Manrope','General Sans',
+  'Cabinet Grotesk','Clash Display','Neue Haas Grotesk','Helvetica Neue',
+  'SF Pro','SF Pro Display','SF Pro Text','Georgia','Times New Roman',
+  'Lora','Merriweather','Libre Baskerville','Poppins','Nunito','Raleway',
+];
+
+function extractDNA(content) {
+  // Extract hex colors — pick top 3 most frequent unique ones, skip near-white/black singles
+  const hexRegex = /#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})\b/g;
+  const colorCounts = {};
+  let m;
+  while ((m = hexRegex.exec(content)) !== null) {
+    const hex = '#' + m[1].toUpperCase().padEnd(6, m[1][0]);
+    colorCounts[hex] = (colorCounts[hex] || 0) + 1;
+  }
+  // Sort by frequency, take top 3
+  const colors = Object.entries(colorCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([hex]) => hex)
+    .slice(0, 3);
+
+  if (colors.length < 2) return null; // not enough color data
+
+  // Pad to 3 if only 2 found
+  while (colors.length < 3) colors.push('#F5F5F5');
+
+  // Extract font names — check for known fonts first, then font-family declarations
+  const foundFonts = [];
+  for (const font of KNOWN_FONTS) {
+    if (content.includes(font) && !foundFonts.includes(font)) {
+      foundFonts.push(font);
+      if (foundFonts.length === 2) break;
+    }
+  }
+
+  // Fallback: regex for font-family or Google Fonts family= param
+  if (foundFonts.length < 2) {
+    const gfMatch = content.match(/family=([A-Za-z+]+)/g);
+    if (gfMatch) {
+      for (const gf of gfMatch) {
+        const name = gf.replace('family=', '').replace(/\+/g, ' ');
+        if (!foundFonts.includes(name)) foundFonts.push(name);
+        if (foundFonts.length === 2) break;
+      }
+    }
+  }
+
+  const font1 = foundFonts[0] || 'Inter';
+  const font2 = foundFonts[1] || foundFonts[0] || 'Inter';
+
+  return {
+    colors,
+    labels: ['Primary', 'Accent', 'Surface'],
+    font1,
+    font1Label: 'Primary Heading System',
+    font2,
+    font2Label: 'Body & UI System',
+  };
+}
+
 async function kvCommand(command, ...args) {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
@@ -60,12 +124,17 @@ module.exports = async function handler(req, res) {
     avatar: `https://unavatar.io/github/${path.split('/')[0]}`,
   };
 
-  // Run security scan on skill content
+  // Run security scan + DNA extraction on skill content
   try {
     const result = await fetchSkillContent(path);
     if (result) {
       skill.securityScan = scanContent(result.content);
       skill.securityScan.source = result.source;
+      // Extract DNA only for Aesthetic skills
+      if (skill.type === 'Aesthetic') {
+        const dna = extractDNA(result.content);
+        if (dna) skill.dna = dna;
+      }
     } else {
       skill.securityScan = { status: 'passed', scannedAt: new Date().toISOString(), note: 'No SKILL.md/README.md found to scan' };
     }

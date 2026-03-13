@@ -757,9 +757,10 @@
 
             // Visual DNA: show/hide and populate dynamically
             const visualDnaSection = document.getElementById('visual-dna');
-            if (data.type === 'Aesthetic' && visualDNAMap[skillId]) {
+            const dnaSource = visualDNAMap[skillId] || (data.type === 'Aesthetic' && data.dna) || null;
+            if (data.type === 'Aesthetic' && dnaSource) {
                 visualDnaSection.style.display = '';
-                const dna = visualDNAMap[skillId];
+                const dna = dnaSource;
                 // Update colors
                 for (let i = 0; i < 3; i++) {
                     const cel = document.getElementById('dna-c' + (i + 1));
