@@ -415,6 +415,24 @@
                 labels: ['Brand Tan','Primary','Surface'],
                 font1: 'Poppins', font1Label: 'Brand Heading System',
                 font2: 'Lora', font2Label: 'Brand Body System'
+            },
+            'anthropics/theme-factory': {
+                colors: ['#1A1A2E','#E94560','#F5F5F5'],
+                labels: ['Deep Navy','Vivid Red','Surface'],
+                font1: 'Playfair Display', font1Label: 'Display Heading System',
+                font2: 'Source Sans Pro', font2Label: 'Body & UI System'
+            },
+            'Owl-Listener/designer-skills': {
+                colors: ['#0EA5E9','#0F172A','#F8FAFC'],
+                labels: ['Sky Blue','Slate','Surface'],
+                font1: 'Inter', font1Label: 'Interface System',
+                font2: 'Inter', font2Label: 'Body System'
+            },
+            'carmahhawwari/ui-design-brain': {
+                colors: ['#4F46E5','#1E1B4B','#EEF2FF'],
+                labels: ['Indigo','Deep Indigo','Surface'],
+                font1: 'DM Sans', font1Label: 'Interface Heading System',
+                font2: 'DM Sans', font2Label: 'Body System'
             }
         };
 
@@ -550,6 +568,39 @@
                 type: 'Engineering',
                 description: 'Mobile-first development standards with consistent breakpoints, fluid layouts using flexbox and CSS Grid, relative units, and touch-friendly interaction targets.',
                 bullets: ['Mobile-first mandatory approach', 'Standard Tailwind/Bootstrap breakpoints', 'Fluid layouts with flexbox and CSS Grid', 'Touch-friendly 44x44px minimum targets']
+            },
+            'anthropics/theme-factory': {
+                name: 'Theme Factory',
+                github: 'https://github.com/anthropics/skills/tree/main/skills/theme-factory',
+                website: '',
+                avatar: 'https://unavatar.io/github/anthropics',
+                stars: '92.7K',
+                installs: '21,400',
+                type: 'Aesthetic',
+                description: 'Anthropic\'s official theming toolkit for styling artifacts. Apply 10 pre-set professional themes with curated color palettes and font pairings to slides, docs, HTML pages, and any artifact.',
+                bullets: ['10 pre-set professional themes', 'Curated color palettes with hex codes', 'Complementary font pairings per theme', 'Apply to slides, docs, HTML, and more']
+            },
+            'Owl-Listener/designer-skills': {
+                name: 'Designer Skills Collection',
+                github: 'https://github.com/Owl-Listener/designer-skills',
+                website: '',
+                avatar: 'https://unavatar.io/github/Owl-Listener',
+                stars: '77',
+                installs: '3,200',
+                type: 'Aesthetic',
+                description: '63 design skills and 27 commands across 8 plugins covering the full design workflow — from user research and systems to UI, interaction design, prototyping, and design ops.',
+                bullets: ['63 skills across 8 domain plugins', '27 slash commands for chained workflows', 'Covers research, systems, UX, UI, and ops', 'MIT licensed, Claude Code compatible']
+            },
+            'carmahhawwari/ui-design-brain': {
+                name: 'UI Design Brain',
+                github: 'https://github.com/carmahhawwari/ui-design-brain',
+                website: '',
+                avatar: 'https://unavatar.io/github/carmahhawwari',
+                stars: '576',
+                installs: '8,400',
+                type: 'Aesthetic',
+                description: 'A knowledge base of 60+ UI component patterns sourced from component.gallery. Replaces generic AI guessing with real design-system conventions for production-grade, SaaS-quality interfaces.',
+                bullets: ['60+ real component patterns from component.gallery', 'Single-column forms, card hierarchies, overlay rules', 'WCAG AA accessibility guidelines built-in', 'No generic AI aesthetics \u2014 senior SaaS quality']
             }
         };
 
@@ -670,7 +721,10 @@
                     'expo/building-native-ui': { icon: 'EX', color: 'bg-violet-50', textColor: 'text-violet-600' },
                     'google-labs-code/design-md': { icon: 'DM', color: 'bg-emerald-50', textColor: 'text-emerald-600' },
                     'anthropics/brand-guidelines': { icon: 'BG', color: 'bg-orange-50', textColor: 'text-orange-600' },
-                    'am-will/frontend-responsive-design-standards': { icon: 'RD', color: 'bg-amber-50', textColor: 'text-amber-600' }
+                    'am-will/frontend-responsive-design-standards': { icon: 'RD', color: 'bg-amber-50', textColor: 'text-amber-600' },
+                    'anthropics/theme-factory': { icon: 'TF', color: 'bg-orange-50', textColor: 'text-orange-600' },
+                    'Owl-Listener/designer-skills': { icon: 'DS', color: 'bg-sky-50', textColor: 'text-sky-600' },
+                    'carmahhawwari/ui-design-brain': { icon: 'UB', color: 'bg-indigo-50', textColor: 'text-indigo-600' }
                 };
                 const ic = iconMap[skillId];
                 if (ic) {
