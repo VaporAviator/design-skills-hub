@@ -9,10 +9,9 @@ async function kvGet(key) {
   });
   const data = await res.json();
   if (!data.result) return null;
-  // Handle double-encoded JSON (string wrapped in string)
+  // Handle multi-encoded JSON
   let val = data.result;
-  if (typeof val === 'string') val = JSON.parse(val);
-  if (typeof val === 'string') val = JSON.parse(val);
+  while (typeof val === 'string') val = JSON.parse(val);
   return val;
 }
 
