@@ -12,7 +12,7 @@ async function kvGet(key) {
 }
 
 async function kvKeys(pattern) {
-  const res = await fetch(`${KV_URL}/keys/${encodeURIComponent(pattern)}`, {
+  const res = await fetch(`${KV_URL}/keys/${pattern}`, {
     headers: { Authorization: `Bearer ${KV_TOKEN}` },
   });
   const data = await res.json();
