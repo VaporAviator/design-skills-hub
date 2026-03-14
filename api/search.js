@@ -9,9 +9,14 @@ async function kvGet(key) {
   });
   const data = await res.json();
   if (!data.result) return null;
-  // Handle multi-encoded JSON
+  // Handle single or multi-encoded JSON
   let val = data.result;
-  while (typeof val === 'string') val = JSON.parse(val);
+  if (typeof val === 'string') {
+    try { val = JSON.parse(val); } catch(e) { return null; }
+  }
+  if (typeof val === 'string') {
+    try { val = JSON.parse(val); } catch(e) { return null; }
+  }
   return val;
 }
 
