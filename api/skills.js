@@ -112,3 +112,6 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ skills: numbered, total: numbered.length });
   }
 };
+
+// Allow other scripts to import SEED_SKILLS directly
+module.exports.SEED_SKILLS = SEED_SKILLS;

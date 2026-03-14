@@ -163,6 +163,49 @@ module.exports = async function handler(req, res) {
     await kvCommand('SET', `skill:${id}`, JSON.stringify(skill));
     await kvCommand('SADD', 'skills:ids', id);
 
+    // Generate embedding and upsert to Supabase (non-blocking, best-effort)
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+    const googleKey = process.env.GOOGLE_API_KEY;
+    if (supabaseUrl && supabaseKey && googleKey) {
+      (async () => {
+        try {
+          const embedText = [skill.name, skill.description, skill.type || ''].join(' ');
+          const embedRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${googleKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ model: 'models/gemini-embedding-001', content: { parts: [{ text: embedText }] } }),
+            }
+          );
+          if (embedRes.ok) {
+            const { embedding } = await embedRes.json();
+            await fetch(`${supabaseUrl}/rest/v1/skills`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                apikey: supabaseKey,
+                Authorization: `Bearer ${supabaseKey}`,
+                Prefer: 'resolution=merge-duplicates',
+              },
+              body: JSON.stringify({
+                skill_id: id,
+                name: skill.name,
+                description: skill.description,
+                type: skill.type || null,
+                github: skill.github || null,
+                install_cmd: skill.installCmd || null,
+                embedding: embedding.values,
+              }),
+            });
+          }
+        } catch (e) {
+          console.error('Embedding upsert failed (non-fatal):', e.message);
+        }
+      })();
+    }
+
     return res.status(201).json({ success: true, skill });
   } catch (e) {
     return res.status(500).json({ error: 'Failed to save skill. Please try again.' });
