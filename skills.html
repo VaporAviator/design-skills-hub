@@ -386,8 +386,10 @@
             });
         }
 
+        let searchDebounce = null;
+
         function filterAndRender() {
-            const term = searchInput.value.toLowerCase();
+            const term = searchInput.value.toLowerCase().trim();
             let filtered = [...allSkills];
 
             // Filter by type
@@ -395,7 +397,7 @@
                 filtered = filtered.filter(s => s.type === activeFilter);
             }
 
-            // Search
+            // Local keyword search (instant, no API)
             if (term) {
                 filtered = filtered.filter(s =>
                     s.name.toLowerCase().includes(term) ||
@@ -408,27 +410,61 @@
             if (activeSort === 'alltime') {
                 filtered.sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
             } else if (activeSort === 'trending') {
-                // Simulate trending: reverse of default order for variety
                 filtered.sort((a, b) => parseInstalls(a.installs) - parseInstalls(b.installs));
-                // Bring some mid-range to top for "trending" feel
                 const mid = Math.floor(filtered.length / 2);
                 filtered = [...filtered.slice(mid), ...filtered.slice(0, mid)];
             }
             if (activeSort === 'highlighted') {
-                // Highlighted items pinned to top, rest sorted by installs
                 const pinned = filtered.filter(s => s.highlighted);
                 const rest = filtered.filter(s => !s.highlighted).sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
                 filtered = [...pinned, ...rest];
             }
 
-            // Re-number
             filtered = filtered.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
-
             renderSkills(filtered);
         }
 
-        // Search
-        searchInput.addEventListener('input', filterAndRender);
+        async function semanticSearch(query) {
+            try {
+                const res = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query }),
+                });
+                const data = await res.json();
+                if (!data.results || !data.results.length) return false;
+
+                // Merge API results with local skill data for full card info
+                const enriched = data.results.map((r, i) => {
+                    const local = allSkills.find(s => s.path === r.path || s.id === r.skill_id) || {};
+                    return { ...local, ...r, id: String(i + 1).padStart(2, '0') };
+                });
+
+                // Filter by active type filter if set
+                const filtered = activeFilter === 'all' ? enriched : enriched.filter(s => s.type === activeFilter);
+                renderSkills(filtered);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Search: instant local match first, then semantic after 400ms
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchDebounce);
+            const term = searchInput.value.trim();
+            if (!term) { filterAndRender(); return; }
+
+            // Show local results immediately
+            filterAndRender();
+
+            // Then upgrade with semantic results after debounce
+            searchDebounce = setTimeout(async () => {
+                if (searchInput.value.trim() === term) {
+                    await semanticSearch(term);
+                }
+            }, 400);
+        });
 
         // Filter buttons
         document.querySelectorAll('.filter-btn').forEach(btn => {
