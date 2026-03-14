@@ -660,11 +660,17 @@ const INDEX_SKILLS = [
 
 const SYNONYMS = {
   urgent:['error','warning','danger','alert'],urgency:['error','warning','danger'],
-  dark:['contrast','monochrome','black'],mobile:['ios','native','responsive','touch','app'],
-  minimal:['clean','simple','sleek'],brand:['identity','colors','typography'],
+  dark:['contrast','monochrome','black','high-contrast','minimal','modern'],
+  light:['white','clean','minimal','soft'],
+  mobile:['ios','native','responsive','touch','app'],
+  minimal:['clean','simple','sleek','modern','minimal'],
+  brand:['identity','colors','typography'],
   type:['typography','font','serif'],color:['palette','colors','accent','theme'],
-  fast:['performance','optimization'],component:['ui','pattern','button'],
+  fast:['performance','optimization'],component:['ui','pattern','button','components'],
   ai:['agent','llm','prompt'],system:['tokens','components','design system'],
+  ui:['interface','component','pattern','frontend'],
+  aesthetic:['style','visual','design','art'],
+  clean:['minimal','simple','modern','sleek'],
 };
 
 function tokenize(t) { return t.toLowerCase().replace(/[^\w\s]/g,' ').split(/\s+/).filter(x=>x.length>1); }
@@ -703,7 +709,7 @@ function runSemanticSearch() {
   const qt = expandQuery(tokenize(query));
   const results = INDEX_SKILLS
     .map(s => ({ ...s, score: scoreSkill(s, qt) }))
-    .filter(s => s.score > 0)
+    .filter(s => s.score >= 0.1)
     .sort((a, b) => b.score - a.score)
     .slice(0, 6);
 
