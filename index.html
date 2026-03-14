@@ -693,10 +693,57 @@ function scoreSkill(skill, qt) {
 let searchTimer = null;
 function onSearchInput() {
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(runSemanticSearch, 150);
+  searchTimer = setTimeout(runSemanticSearch, 300);
 }
 
-function runSemanticSearch() {
+function renderResults(results, query) {
+  const resultsEl = document.getElementById('semantic-results');
+  if (!results.length) {
+    resultsEl.innerHTML = '<p class="text-center grotesk-text text-sm text-neutral-400 py-4">No matching skills found.</p>';
+    resultsEl.classList.remove('hidden');
+    return;
+  }
+  const maxScore = results[0].similarity;
+  // Merge with INDEX_SKILLS to get icon/color/avatar/installs
+  const enriched = results.map(r => {
+    const local = INDEX_SKILLS.find(s => s.path === r.path || s.id === r.skill_id) || {};
+    return { ...local, ...r };
+  });
+  resultsEl.innerHTML = `
+    <div class="space-y-2">
+      ${enriched.map(r => `
+        <div class="group flex items-center justify-between p-4 md:p-5 ${r.highlighted ? 'bg-white studio-pick-glow' : 'bg-white border border-neutral-100'} rounded-3xl hover:bg-neutral-50 transition-all cursor-pointer relative" onclick="location.href='skill-detail.html?id=${r.path}'">
+          <div class="flex items-center gap-4 md:gap-6 min-w-0">
+            <div class="w-12 h-12 ${r.highlighted?'bg-black text-white':(r.color||'bg-neutral-100')} rounded-2xl hidden md:flex items-center justify-center font-bold ${r.highlighted?'serif-text text-base italic':'grotesk-text text-xs'} shadow-sm shrink-0 overflow-hidden">
+              ${r.svg?'<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 22.525H0L12 1.475L24 22.525Z"/></svg>':(r.icon||'')}
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 mb-0.5">
+                <h4 class="grotesk-text font-bold text-sm md:text-base">${r.name}</h4>
+                <span class="hidden md:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${r.type==='Aesthetic'?'bg-black text-white':'bg-neutral-100 text-neutral-500'}">${r.type||''}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <img src="${r.avatar||''}" class="w-3.5 h-3.5 rounded-full bg-neutral-200 hidden md:block" alt="" onerror="this.style.display='none'">
+                <p class="text-[11px] text-neutral-400 font-medium uppercase tracking-wider truncate">${r.path||''}</p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 md:gap-8 shrink-0">
+            <div class="text-right hidden md:block">
+              <span class="block grotesk-text font-bold text-sm md:text-base">${r.installs||''}</span>
+              <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Installs</span>
+            </div>
+            <span class="grotesk-text text-[10px] font-bold text-neutral-300 uppercase tracking-widest">${Math.round((r.similarity/maxScore)*100)}% match</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <button onclick="document.getElementById('semantic-results').classList.add('hidden');document.getElementById('semantic-search-input').value='';" class="mt-3 w-full text-center grotesk-text text-xs text-neutral-300 hover:text-neutral-500 transition-colors py-2">Clear</button>
+  `;
+  resultsEl.classList.remove('hidden');
+}
+
+async function runSemanticSearch() {
   const input = document.getElementById('semantic-search-input');
   const resultsEl = document.getElementById('semantic-results');
   const query = input.value.trim();
@@ -706,52 +753,20 @@ function runSemanticSearch() {
     return;
   }
 
-  const qt = expandQuery(tokenize(query));
-  const results = INDEX_SKILLS
-    .map(s => ({ ...s, score: scoreSkill(s, qt) }))
-    .filter(s => s.score >= 0.1)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 6);
-
-  if (!results.length) {
-    resultsEl.innerHTML = '<p class="text-center grotesk-text text-sm text-neutral-400 py-4">No matching skills found.</p>';
-    resultsEl.classList.remove('hidden');
-    return;
-  }
-
-  const maxScore = results[0].score;
-  resultsEl.innerHTML = `
-    <div class="space-y-2">
-      ${results.map(r => `
-        <div class="group flex items-center justify-between p-4 md:p-5 ${r.highlighted ? 'bg-white studio-pick-glow' : 'bg-white border border-neutral-100'} rounded-3xl hover:bg-neutral-50 transition-all cursor-pointer relative" onclick="location.href='skill-detail.html?id=${r.path}'">
-          <div class="flex items-center gap-4 md:gap-6 min-w-0">
-            <div class="w-12 h-12 ${r.highlighted?'bg-black text-white':(r.color||'bg-neutral-100')} rounded-2xl hidden md:flex items-center justify-center font-bold ${r.highlighted?'serif-text text-base italic':'grotesk-text text-xs'} shadow-sm shrink-0 overflow-hidden">
-              ${r.svg?'<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 22.525H0L12 1.475L24 22.525Z"/></svg>':(r.icon||'')}
-            </div>
-            <div class="min-w-0">
-              <div class="flex items-center gap-2 mb-0.5">
-                <h4 class="grotesk-text font-bold text-sm md:text-base">${r.name}</h4>
-                <span class="hidden md:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${r.type==='Aesthetic'?'bg-black text-white':'bg-neutral-100 text-neutral-500'}">${r.type}</span>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <img src="${r.avatar||''}" class="w-3.5 h-3.5 rounded-full bg-neutral-200 hidden md:block" alt="" onerror="this.style.display='none'">
-                <p class="text-[11px] text-neutral-400 font-medium uppercase tracking-wider truncate">${r.path}</p>
-              </div>
-            </div>
-          </div>
-          <div class="flex items-center gap-4 md:gap-8 shrink-0">
-            <div class="text-right hidden md:block">
-              <span class="block grotesk-text font-bold text-sm md:text-base">${r.installs}</span>
-              <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Installs</span>
-            </div>
-            <span class="grotesk-text text-[10px] font-bold text-neutral-300 uppercase tracking-widest">${Math.round((r.score/maxScore)*100)}% match</span>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-    <button onclick="document.getElementById('semantic-results').classList.add('hidden');document.getElementById('semantic-search-input').value='';" class="mt-3 w-full text-center grotesk-text text-xs text-neutral-300 hover:text-neutral-500 transition-colors py-2">Clear</button>
-  `;
+  resultsEl.innerHTML = '<p class="text-center grotesk-text text-sm text-neutral-400 py-4">Searching...</p>';
   resultsEl.classList.remove('hidden');
+
+  try {
+    const res = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query }),
+    });
+    const data = await res.json();
+    renderResults(data.results || [], query);
+  } catch (err) {
+    resultsEl.innerHTML = '<p class="text-center grotesk-text text-sm text-neutral-400 py-4">Search unavailable.</p>';
+  }
 }
 </script>
 </body>
