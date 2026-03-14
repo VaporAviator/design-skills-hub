@@ -8,7 +8,12 @@ async function kvGet(key) {
     headers: { Authorization: `Bearer ${KV_TOKEN}` },
   });
   const data = await res.json();
-  return data.result ? JSON.parse(data.result) : null;
+  if (!data.result) return null;
+  // Handle double-encoded JSON (string wrapped in string)
+  let val = data.result;
+  if (typeof val === 'string') val = JSON.parse(val);
+  if (typeof val === 'string') val = JSON.parse(val);
+  return val;
 }
 
 async function kvKeys(pattern) {
