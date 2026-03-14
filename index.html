@@ -179,7 +179,7 @@
             <!-- Semantic Search -->
             <div class="max-w-3xl mx-auto">
                 <div class="flex flex-col md:flex-row items-center justify-center gap-3 mb-3">
-                    <input id="semantic-search-input" type="text" placeholder="Search by color, font, style, name..." class="w-full px-8 py-5 rounded-easel-button bg-white border border-neutral-200 text-neutral-900 text-lg font-medium grotesk-text focus:outline-none focus:border-neutral-400 transition-colors shadow-sm" onkeydown="if(event.key==='Enter') runSemanticSearch()">
+                    <input id="semantic-search-input" type="text" placeholder="Search by color, font, style, name..." class="w-full px-8 py-5 rounded-easel-button bg-white border border-neutral-200 text-neutral-900 text-lg font-medium grotesk-text focus:outline-none focus:border-neutral-400 transition-colors shadow-sm" oninput="onSearchInput()" onkeydown="if(event.key==='Enter') runSemanticSearch()">
                     <button onclick="runSemanticSearch()" class="w-full md:w-auto px-10 py-5 bg-black text-white rounded-easel-button font-bold grotesk-text uppercase tracking-widest hover:bg-neutral-800 transition-colors whitespace-nowrap text-sm">
                         Search
                     </button>
@@ -189,7 +189,7 @@
                 </p>
             </div>
             <!-- Search Results -->
-            <div id="semantic-results" class="hidden mt-8 max-w-3xl mx-auto"></div>
+            <div id="semantic-results" class="hidden mt-6 max-w-3xl mx-auto"></div>
             <!-- Figma URL → Generate Skill (hidden until feature is ready) -->
         </div>
     </section>
@@ -638,54 +638,114 @@
     <script defer src="/_vercel/insights/script.js"></script>
 
 <script>
-async function runSemanticSearch() {
+// Skill data for index page search (path used for skill-detail links)
+const INDEX_SKILLS = [
+  {id:'s00',path:'vaporaviator/easel-style',name:'VaporAviator Easel Style',description:'Modern high-contrast aesthetic — Instrument Serif + Space Grotesk, monochrome palette, 40px radius system.',type:'Aesthetic',installs:'85.5K',color:'bg-black',icon:'E',highlighted:true,avatar:'https://unavatar.io/twitter/VaporAviator'},
+  {id:'s01',path:'vercel-labs/vercel-react-best-practices',name:'Vercel React Best Practices',description:'58 performance rules for React + Next.js, prioritized by impact.',type:'Engineering',installs:'197.3K',color:'bg-neutral-200',svg:true,avatar:'https://unavatar.io/github/vercel'},
+  {id:'s02',path:'vercel-labs/web-design-guidelines',name:'Web Design Guidelines',description:'Review code for compliance with Web Interface Guidelines.',type:'Engineering',installs:'154.8K',color:'bg-neutral-200',svg:true,avatar:'https://unavatar.io/github/vercel'},
+  {id:'s03',path:'anthropics/frontend-design',name:'Frontend Design',description:'Distinctive, production-grade frontend interfaces — no generic AI slop.',type:'Aesthetic',installs:'143.7K',color:'bg-orange-50',icon:'FD',avatar:'https://unavatar.io/github/anthropics'},
+  {id:'s04',path:'sleekdotdesign/sleek-design-mobile-apps',name:'Sleek Design',description:'AI-powered mobile app design via natural language prompts.',type:'Aesthetic',installs:'122.5K',color:'bg-pink-50',icon:'SD',avatar:'https://unavatar.io/github/sleekdotdesign'},
+  {id:'s05',path:'pbakaus/impeccable',name:'Impeccable',description:'17 design slash commands for AI-driven frontend aesthetics.',type:'Aesthetic',installs:'85.2K',color:'bg-yellow-50',icon:'IM',avatar:'https://unavatar.io/github/pbakaus'},
+  {id:'s06',path:'anthropics/canvas-design',name:'Canvas Design',description:'Visual design philosophies and museum-quality aesthetic artifacts.',type:'Aesthetic',installs:'17.0K',color:'bg-orange-50',icon:'CD',avatar:'https://unavatar.io/github/anthropics'},
+  {id:'s07',path:'wshobson/tailwind-design-system',name:'Tailwind Design System',description:'Production-ready design systems with Tailwind CSS v4, tokens, CVA.',type:'Engineering',installs:'16.9K',color:'bg-blue-50',icon:'TW',avatar:'https://unavatar.io/github/wshobson'},
+  {id:'s08',path:'expo/building-native-ui',name:'Building Native UI',description:'Native iOS interfaces with Expo, Apple HIG standards.',type:'Engineering',installs:'16.7K',color:'bg-violet-50',icon:'EX',avatar:'https://unavatar.io/github/expo'},
+  {id:'s09',path:'google-labs-code/design-md',name:'Design MD',description:'Generate DESIGN.md from Stitch projects for semantic design systems.',type:'Engineering',installs:'13.6K',color:'bg-emerald-50',icon:'DM',avatar:'https://unavatar.io/github/google-labs-code'},
+  {id:'s10',path:'anthropics/brand-guidelines',name:'Brand Guidelines',description:'Anthropic brand identity — colors, typography, accent cycling.',type:'Aesthetic',installs:'12.2K',color:'bg-orange-50',icon:'BG',avatar:'https://unavatar.io/github/anthropics'},
+  {id:'s11',path:'am-will/frontend-responsive-design-standards',name:'Responsive Design Standards',description:'Mobile-first breakpoints, fluid layouts, touch-friendly targets.',type:'Engineering',installs:'5.1K',color:'bg-amber-50',icon:'RD',avatar:'https://unavatar.io/github/am-will'},
+  {id:'s12',path:'Owl-Listener/designer-skills',name:'Designer Skills Collection',description:'63 design skills across 8 plugins — research, systems, UX strategy, UI, interaction, prototyping, and ops.',type:'Aesthetic',installs:'3.2K',color:'bg-sky-50',icon:'DS',avatar:'https://unavatar.io/github/Owl-Listener'},
+  {id:'s13',path:'carmahhawwari/ui-design-brain',name:'UI Design Brain',description:'Production-grade UI from 60+ real component patterns — modern, minimal, SaaS-quality.',type:'Aesthetic',installs:'8.4K',color:'bg-indigo-50',icon:'UB',avatar:'https://unavatar.io/github/carmahhawwari'},
+  {id:'s14',path:'anthropics/theme-factory',name:'Theme Factory',description:'10 pre-set themes with curated color palettes and font pairings.',type:'Aesthetic',installs:'21.4K',color:'bg-orange-50',icon:'TF',avatar:'https://unavatar.io/github/anthropics'},
+  {id:'s15',path:'VaporAviator/vaporaviator-lab-style',name:'VaporAviator Lab Style',description:'Research-lab aesthetic for experimental AI interfaces — technical precision meets design craft.',type:'Aesthetic',installs:'1.2K',color:'bg-black',icon:'LS',avatar:'https://unavatar.io/twitter/VaporAviator'},
+];
+
+const SYNONYMS = {
+  urgent:['error','warning','danger','alert'],urgency:['error','warning','danger'],
+  dark:['contrast','monochrome','black'],mobile:['ios','native','responsive','touch','app'],
+  minimal:['clean','simple','sleek'],brand:['identity','colors','typography'],
+  type:['typography','font','serif'],color:['palette','colors','accent','theme'],
+  fast:['performance','optimization'],component:['ui','pattern','button'],
+  ai:['agent','llm','prompt'],system:['tokens','components','design system'],
+};
+
+function tokenize(t) { return t.toLowerCase().replace(/[^\w\s]/g,' ').split(/\s+/).filter(x=>x.length>1); }
+function expandQuery(tokens) {
+  const ex = new Set(tokens);
+  for(const t of tokens){ (SYNONYMS[t]||[]).forEach(s=>tokenize(s).forEach(x=>ex.add(x))); }
+  return [...ex];
+}
+function scoreSkill(skill, qt) {
+  const text = `${skill.name} ${skill.name} ${skill.description} ${skill.type}`.toLowerCase();
+  const st = new Set(tokenize(text));
+  let score = 0;
+  for(const q of qt){
+    if(st.has(q)){ score += skill.name.toLowerCase().includes(q)?3:skill.type.toLowerCase().includes(q)?2:1; }
+    else if(text.includes(q)) score += 0.5;
+  }
+  return score / Math.max(qt.length, 1);
+}
+
+let searchTimer = null;
+function onSearchInput() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(runSemanticSearch, 150);
+}
+
+function runSemanticSearch() {
   const input = document.getElementById('semantic-search-input');
   const resultsEl = document.getElementById('semantic-results');
   const query = input.value.trim();
-  if (!query) return;
 
-  resultsEl.innerHTML = '<p class="text-center grotesk-text text-sm text-neutral-400">Searching...</p>';
-  resultsEl.classList.remove('hidden');
-
-  try {
-    const res = await fetch('/api/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query }),
-    });
-    const data = await res.json();
-
-    if (!data.results || data.results.length === 0) {
-      resultsEl.innerHTML = '<p class="text-center grotesk-text text-sm text-neutral-400">No matching skills found. Try a different query.</p>';
-      return;
-    }
-
-    const html = `
-      <div class="mb-4 text-center">
-        <span class="grotesk-text text-xs text-neutral-400 uppercase tracking-widest">Semantic results for "${query}"</span>
-      </div>
-      <div class="space-y-3">
-        ${data.results.map(r => `
-          <a href="/skill-detail?id=${r.skill_id}" class="flex items-start gap-4 p-4 bg-white border border-neutral-100 rounded-2xl hover:border-neutral-300 transition-colors group">
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="grotesk-text font-bold text-sm text-neutral-900">${r.name}</span>
-                <span class="grotesk-text text-[10px] uppercase tracking-widest text-neutral-400 border border-neutral-200 rounded-full px-2 py-0.5">${r.type || 'Skill'}</span>
-              </div>
-              <p class="grotesk-text text-xs text-neutral-500 leading-relaxed">${r.description || ''}</p>
-            </div>
-            <div class="shrink-0 text-right">
-              <span class="grotesk-text text-[10px] text-neutral-300 font-medium">${Math.round(r.similarity * 100)}% match</span>
-            </div>
-          </a>
-        `).join('')}
-      </div>
-      <button onclick="document.getElementById('semantic-results').classList.add('hidden'); document.getElementById('semantic-search-input').value='';" class="mt-4 w-full text-center grotesk-text text-xs text-neutral-400 hover:text-neutral-600 transition-colors">Clear results</button>
-    `;
-    resultsEl.innerHTML = html;
-  } catch (err) {
-    resultsEl.innerHTML = '<p class="text-center grotesk-text text-sm text-red-400">Search failed. Please try again.</p>';
+  if (!query || query.length < 2) {
+    resultsEl.classList.add('hidden');
+    return;
   }
+
+  const qt = expandQuery(tokenize(query));
+  const results = INDEX_SKILLS
+    .map(s => ({ ...s, score: scoreSkill(s, qt) }))
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6);
+
+  if (!results.length) {
+    resultsEl.innerHTML = '<p class="text-center grotesk-text text-sm text-neutral-400 py-4">No matching skills found.</p>';
+    resultsEl.classList.remove('hidden');
+    return;
+  }
+
+  const maxScore = results[0].score;
+  resultsEl.innerHTML = `
+    <div class="space-y-2">
+      ${results.map(r => `
+        <div class="group flex items-center justify-between p-4 md:p-5 ${r.highlighted ? 'bg-white studio-pick-glow' : 'bg-white border border-neutral-100'} rounded-3xl hover:bg-neutral-50 transition-all cursor-pointer relative" onclick="location.href='skill-detail.html?id=${r.path}'">
+          <div class="flex items-center gap-4 md:gap-6 min-w-0">
+            <div class="w-12 h-12 ${r.highlighted?'bg-black text-white':(r.color||'bg-neutral-100')} rounded-2xl hidden md:flex items-center justify-center font-bold ${r.highlighted?'serif-text text-base italic':'grotesk-text text-xs'} shadow-sm shrink-0 overflow-hidden">
+              ${r.svg?'<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 22.525H0L12 1.475L24 22.525Z"/></svg>':(r.icon||'')}
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 mb-0.5">
+                <h4 class="grotesk-text font-bold text-sm md:text-base">${r.name}</h4>
+                <span class="hidden md:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${r.type==='Aesthetic'?'bg-black text-white':'bg-neutral-100 text-neutral-500'}">${r.type}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <img src="${r.avatar||''}" class="w-3.5 h-3.5 rounded-full bg-neutral-200 hidden md:block" alt="" onerror="this.style.display='none'">
+                <p class="text-[11px] text-neutral-400 font-medium uppercase tracking-wider truncate">${r.path}</p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 md:gap-8 shrink-0">
+            <div class="text-right hidden md:block">
+              <span class="block grotesk-text font-bold text-sm md:text-base">${r.installs}</span>
+              <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Installs</span>
+            </div>
+            <span class="grotesk-text text-[10px] font-bold text-neutral-300 uppercase tracking-widest">${Math.round((r.score/maxScore)*100)}% match</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <button onclick="document.getElementById('semantic-results').classList.add('hidden');document.getElementById('semantic-search-input').value='';" class="mt-3 w-full text-center grotesk-text text-xs text-neutral-300 hover:text-neutral-500 transition-colors py-2">Clear</button>
+  `;
+  resultsEl.classList.remove('hidden');
 }
 </script>
 </body>
