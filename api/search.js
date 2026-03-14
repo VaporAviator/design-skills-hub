@@ -80,7 +80,7 @@ module.exports = async function handler(req, res) {
         const record = await kvGet(key);
         if (!record?.embedding) return;
         const score = cosineSimilarity(queryEmbed, record.embedding);
-        if (score > 0.4) {
+        if (score > 0.15) {
           results.push({
             skill_id: record.id,
             name: record.name,
