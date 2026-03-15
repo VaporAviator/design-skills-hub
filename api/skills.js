@@ -65,6 +65,14 @@ const SEED_SKILLS = [
   },
 ];
 
+function parseInstalls(str) {
+  if (!str) return 0;
+  const s = String(str).toUpperCase().trim();
+  if (s.endsWith('K')) return parseFloat(s) * 1000;
+  if (s.endsWith('M')) return parseFloat(s) * 1000000;
+  return parseFloat(s) || 0;
+}
+
 async function kvCommand(command, ...args) {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
@@ -107,12 +115,27 @@ module.exports = async function handler(req, res) {
     submitted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     const all = [...submitted, ...SEED_SKILLS];
+
+    // Sort: highlighted (studio picks) pinned to top, then by installs descending
+    all.sort((a, b) => {
+      const ha = a.highlighted ? 1 : 0;
+      const hb = b.highlighted ? 1 : 0;
+      if (ha !== hb) return hb - ha;
+      return parseInstalls(b.installs) - parseInstalls(a.installs);
+    });
+
     const numbered = all.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
 
     return res.status(200).json({ skills: numbered, total: numbered.length });
   } catch (e) {
     // KV not configured — return seed data only
-    const numbered = SEED_SKILLS.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
+    const seeds = [...SEED_SKILLS].sort((a, b) => {
+      const ha = a.highlighted ? 1 : 0;
+      const hb = b.highlighted ? 1 : 0;
+      if (ha !== hb) return hb - ha;
+      return parseInstalls(b.installs) - parseInstalls(a.installs);
+    });
+    const numbered = seeds.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
     return res.status(200).json({ skills: numbered, total: numbered.length });
   }
 };

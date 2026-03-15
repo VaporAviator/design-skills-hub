@@ -408,15 +408,30 @@
 
             // Sort
             if (activeSort === 'alltime') {
-                filtered.sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
+                // Studio picks pinned to top, then by installs desc
+                filtered.sort((a, b) => {
+                    const ha = a.highlighted ? 1 : 0;
+                    const hb = b.highlighted ? 1 : 0;
+                    if (ha !== hb) return hb - ha;
+                    return parseInstalls(b.installs) - parseInstalls(a.installs);
+                });
             } else if (activeSort === 'trending') {
                 filtered.sort((a, b) => parseInstalls(a.installs) - parseInstalls(b.installs));
                 const mid = Math.floor(filtered.length / 2);
                 filtered = [...filtered.slice(mid), ...filtered.slice(0, mid)];
-            }
-            if (activeSort === 'highlighted') {
-                const pinned = filtered.filter(s => s.highlighted);
-                const rest = filtered.filter(s => !s.highlighted).sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
+            } else if (activeSort === 'highlighted') {
+                // Studio picks first, then newest submitted (by createdAt desc), then rest by installs
+                const pinned = filtered.filter(s => s.highlighted)
+                    .sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
+                const rest = filtered.filter(s => !s.highlighted)
+                    .sort((a, b) => {
+                        const aDate = a.createdAt ? new Date(a.createdAt) : null;
+                        const bDate = b.createdAt ? new Date(b.createdAt) : null;
+                        if (aDate && bDate) return bDate - aDate;
+                        if (aDate) return -1;
+                        if (bDate) return 1;
+                        return parseInstalls(b.installs) - parseInstalls(a.installs);
+                    });
                 filtered = [...pinned, ...rest];
             }
 
