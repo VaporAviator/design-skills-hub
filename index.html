@@ -464,7 +464,7 @@ let INDEX_SKILLS = [];
     const container = document.getElementById('leaderboard-list');
     container.innerHTML = top6.map((skill, i) => `
       <div class="group flex items-start md:items-center justify-between p-4 md:p-6 ${skill.highlighted ? 'bg-white hover:bg-neutral-50 studio-pick-glow' : 'bg-white hover:bg-neutral-50 border border-neutral-100'} rounded-3xl transition-all cursor-pointer relative" onclick="fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({skill:'${skill.path}'})}).catch(()=>{});location.href='skill-detail.html?id=${skill.path}'">
-        ${skill.highlighted ? '<div class="absolute top-3 right-5 grotesk-text text-[8px] font-bold uppercase tracking-[0.3em] text-neutral-400 hidden md:block">★ Studio Pick</div>' : ''}
+        
         <div class="flex items-start md:items-center gap-3 md:gap-8">
           <span class="grotesk-text font-bold text-neutral-300 w-6">${String(i+1).padStart(2,'0')}</span>
           <div class="flex items-center gap-3 md:gap-6">
