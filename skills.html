@@ -435,12 +435,14 @@
                 filtered.forEach(s => { s._trendingClicks = trendingMap[s.path] || 0; });
                 filtered.sort((a, b) => b._trendingClicks - a._trendingClicks || parseInstalls(b.installs) - parseInstalls(a.installs));
             } else if (activeSort === 'highlighted') {
-                // Studio picks first (among themselves by installs), then rest by installs
+                // Studio picks first (by installs), then new submissions (by recency), then rest by installs
                 const pinned = filtered.filter(s => s.highlighted)
                     .sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
-                const rest = filtered.filter(s => !s.highlighted)
+                const newSubmissions = filtered.filter(s => !s.highlighted && s.createdAt)
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const rest = filtered.filter(s => !s.highlighted && !s.createdAt)
                     .sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
-                filtered = [...pinned, ...rest];
+                filtered = [...pinned, ...newSubmissions, ...rest];
             }
 
             filtered = filtered.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
