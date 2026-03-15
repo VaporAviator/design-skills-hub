@@ -706,8 +706,13 @@ function renderResults(results, query) {
   const maxScore = results[0].similarity;
   // Merge with INDEX_SKILLS to get icon/color/avatar/installs
   const enriched = results.map(r => {
-    const local = INDEX_SKILLS.find(s => s.path === r.path || s.id === r.skill_id) || {};
-    return { ...local, ...r };
+    const local = INDEX_SKILLS.find(s =>
+      s.path === r.path ||
+      s.id === r.skill_id ||
+      (r.path && s.path && r.path.toLowerCase() === s.path.toLowerCase()) ||
+      (r.name && s.name && r.name.toLowerCase() === s.name.toLowerCase())
+    ) || {};
+    return { ...local, ...r, path: r.path || local.path };
   });
   resultsEl.innerHTML = `
     <div class="space-y-2">
