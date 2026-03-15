@@ -163,45 +163,54 @@ module.exports = async function handler(req, res) {
     await kvCommand('SET', `skill:${id}`, JSON.stringify(skill));
     await kvCommand('SADD', 'skills:ids', id);
 
-    // Generate embedding and upsert to Supabase (non-blocking, best-effort)
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
-    const googleKey = process.env.GOOGLE_API_KEY;
-    if (supabaseUrl && supabaseKey && googleKey) {
+    // Generate Jina embedding with DNA data and store in KV (non-blocking, best-effort)
+    const jinaKey = process.env.JINA_API_KEY;
+    if (jinaKey) {
       (async () => {
         try {
-          const embedText = [skill.name, skill.description, skill.type || ''].join(' ');
-          const embedRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${googleKey}`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ model: 'models/gemini-embedding-001', content: { parts: [{ text: embedText }] } }),
+          // Build rich text with DNA colors/fonts for embedding
+          const parts = [
+            `${skill.name}.`,
+            skill.description || '',
+            `Type: ${skill.type || 'Skill'}.`,
+            `Path: ${skill.path || ''}.`,
+          ];
+          // Include DNA data if extracted
+          if (skill.dna) {
+            if (skill.dna.colors && skill.dna.colors.length) {
+              parts.push(`Colors: ${skill.dna.colors.join(' ')}.`);
             }
-          );
+            if (skill.dna.font1) parts.push(`Font: ${skill.dna.font1}.`);
+            if (skill.dna.font2) parts.push(`Font: ${skill.dna.font2}.`);
+          }
+          const embedText = parts.join(' ');
+
+          const embedRes = await fetch('https://api.jina.ai/v1/embeddings', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${jinaKey}`,
+            },
+            body: JSON.stringify({
+              model: 'jina-embeddings-v3',
+              input: [embedText],
+              task: 'retrieval.passage',
+            }),
+          });
           if (embedRes.ok) {
-            const { embedding } = await embedRes.json();
-            await fetch(`${supabaseUrl}/rest/v1/skills`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                apikey: supabaseKey,
-                Authorization: `Bearer ${supabaseKey}`,
-                Prefer: 'resolution=merge-duplicates',
-              },
-              body: JSON.stringify({
-                skill_id: id,
-                name: skill.name,
-                description: skill.description,
-                type: skill.type || null,
-                github: skill.github || null,
-                install_cmd: skill.installCmd || null,
-                embedding: embedding.values,
-              }),
-            });
+            const jinaData = await embedRes.json();
+            const embedding = jinaData.data[0].embedding;
+            const record = {
+              id, path: skill.path, name: skill.name,
+              description: skill.description,
+              type: skill.type || null,
+              installs: skill.installs || '0',
+              embedding,
+            };
+            await kvCommand('SET', `jina:${id}`, JSON.stringify(record));
           }
         } catch (e) {
-          console.error('Embedding upsert failed (non-fatal):', e.message);
+          console.error('Jina embedding failed (non-fatal):', e.message);
         }
       })();
     }
