@@ -343,7 +343,7 @@
             }
             emptyState.classList.add('hidden');
             listContainer.innerHTML = skills.map(skill => `
-                <div class="group flex items-start md:items-center justify-between p-4 md:p-6 ${skill.highlighted ? 'bg-white hover:bg-neutral-50 studio-pick-glow' : 'bg-white hover:bg-neutral-50 border border-neutral-100'} rounded-3xl transition-all cursor-pointer relative" onclick="location.href='skill-detail.html?id=${skill.path}'">
+                <div class="group flex items-start md:items-center justify-between p-4 md:p-6 ${skill.highlighted ? 'bg-white hover:bg-neutral-50 studio-pick-glow' : 'bg-white hover:bg-neutral-50 border border-neutral-100'} rounded-3xl transition-all cursor-pointer relative" onclick="fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({skill:'${skill.path}'})}).catch(()=>{});location.href='skill-detail.html?id=${skill.path}'">
                     ${skill.highlighted ? '<div class="absolute top-3 right-5 grotesk-text text-[8px] font-bold uppercase tracking-[0.3em] text-neutral-400 hidden md:block">\u2605 Studio Pick</div>' : ''}
                     <div class="flex items-start md:items-center gap-3 md:gap-8">
                         <span class="grotesk-text font-bold text-neutral-300 w-6">${skill.id}</span>
@@ -388,7 +388,26 @@
 
         let searchDebounce = null;
 
-        function filterAndRender() {
+        // Trending data cache
+        let trendingCache = null;
+        let trendingFetchPromise = null;
+
+        async function fetchTrending() {
+            if (trendingCache) return trendingCache;
+            if (trendingFetchPromise) return trendingFetchPromise;
+            trendingFetchPromise = fetch('/api/track?action=trending')
+                .then(r => r.json())
+                .then(data => {
+                    const map = {};
+                    (data.trending || []).forEach(t => { map[t.skill] = t.clicks; });
+                    trendingCache = map;
+                    return map;
+                })
+                .catch(() => ({}));
+            return trendingFetchPromise;
+        }
+
+        async function filterAndRender() {
             const term = searchInput.value.toLowerCase().trim();
             let filtered = [...allSkills];
 
@@ -408,30 +427,19 @@
 
             // Sort
             if (activeSort === 'alltime') {
-                // Studio picks pinned to top, then by installs desc
-                filtered.sort((a, b) => {
-                    const ha = a.highlighted ? 1 : 0;
-                    const hb = b.highlighted ? 1 : 0;
-                    if (ha !== hb) return hb - ha;
-                    return parseInstalls(b.installs) - parseInstalls(a.installs);
-                });
+                // Pure installs descending, no highlighted pinning
+                filtered.sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
             } else if (activeSort === 'trending') {
-                filtered.sort((a, b) => parseInstalls(a.installs) - parseInstalls(b.installs));
-                const mid = Math.floor(filtered.length / 2);
-                filtered = [...filtered.slice(mid), ...filtered.slice(0, mid)];
+                // Fetch real 24h trending data, sort by clicks desc
+                const trendingMap = await fetchTrending();
+                filtered.forEach(s => { s._trendingClicks = trendingMap[s.path] || 0; });
+                filtered.sort((a, b) => b._trendingClicks - a._trendingClicks || parseInstalls(b.installs) - parseInstalls(a.installs));
             } else if (activeSort === 'highlighted') {
-                // Studio picks first, then newest submitted (by createdAt desc), then rest by installs
+                // Studio picks first (among themselves by installs), then rest by installs
                 const pinned = filtered.filter(s => s.highlighted)
                     .sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
                 const rest = filtered.filter(s => !s.highlighted)
-                    .sort((a, b) => {
-                        const aDate = a.createdAt ? new Date(a.createdAt) : null;
-                        const bDate = b.createdAt ? new Date(b.createdAt) : null;
-                        if (aDate && bDate) return bDate - aDate;
-                        if (aDate) return -1;
-                        if (bDate) return 1;
-                        return parseInstalls(b.installs) - parseInstalls(a.installs);
-                    });
+                    .sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
                 filtered = [...pinned, ...rest];
             }
 

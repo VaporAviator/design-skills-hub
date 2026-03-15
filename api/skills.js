@@ -116,25 +116,15 @@ module.exports = async function handler(req, res) {
 
     const all = [...submitted, ...SEED_SKILLS];
 
-    // Sort: highlighted (studio picks) pinned to top, then by installs descending
-    all.sort((a, b) => {
-      const ha = a.highlighted ? 1 : 0;
-      const hb = b.highlighted ? 1 : 0;
-      if (ha !== hb) return hb - ha;
-      return parseInstalls(b.installs) - parseInstalls(a.installs);
-    });
+    // Sort: all skills by installs descending (no highlighted pinning)
+    all.sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
 
     const numbered = all.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
 
     return res.status(200).json({ skills: numbered, total: numbered.length });
   } catch (e) {
     // KV not configured — return seed data only
-    const seeds = [...SEED_SKILLS].sort((a, b) => {
-      const ha = a.highlighted ? 1 : 0;
-      const hb = b.highlighted ? 1 : 0;
-      if (ha !== hb) return hb - ha;
-      return parseInstalls(b.installs) - parseInstalls(a.installs);
-    });
+    const seeds = [...SEED_SKILLS].sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
     const numbered = seeds.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
     return res.status(200).json({ skills: numbered, total: numbered.length });
   }
