@@ -101,46 +101,63 @@ function keywordSearch(query) {
 
     let score = 0;
 
+    let matchType = '';
+
     // Font match (case-insensitive)
     for (const font of dna.fonts) {
       if (q.includes(font.toLowerCase()) || font.toLowerCase().includes(q)) {
-        score = Math.max(score, 0.9);
+        score = Math.max(score, 0.9); matchType = 'font';
       }
     }
 
     // Color hex match
     for (const hex of dna.colors) {
       if (q.includes(hex.toLowerCase())) {
-        score = Math.max(score, 0.85);
+        score = Math.max(score, 0.85); matchType = matchType || 'color';
       }
     }
 
     // Color word match
     for (const word of dna.colorWords) {
       if (q.includes(word.toLowerCase()) || word.toLowerCase().includes(q)) {
-        score = Math.max(score, 0.7);
+        score = Math.max(score, 0.7); matchType = matchType || 'color';
       }
     }
 
     // Author match
     if (dna.author && (q.includes(dna.author.toLowerCase()) || dna.author.toLowerCase().includes(q))) {
-      score = Math.max(score, 0.8);
+      score = Math.max(score, 0.8); matchType = matchType || 'author';
     }
 
     // Name match
     if (meta.name.toLowerCase().includes(q) || q.includes(meta.name.toLowerCase())) {
-      score = Math.max(score, 0.95);
+      score = Math.max(score, 0.95); matchType = matchType || 'name';
     }
 
     if (score > 0) {
       results.push({
         skill_id: meta.id, name: meta.name, description: meta.desc,
         type: meta.type, path, installs: meta.installs, similarity: score,
+        _matchType: matchType,
       });
     }
   }
 
-  return results.sort((a, b) => b.similarity - a.similarity);
+  // If query matches colors/fonts, boost Aesthetic skills
+  const isVisualQuery = results.some(r => r._matchType === 'color' || r._matchType === 'font');
+  if (isVisualQuery) {
+    results.sort((a, b) => {
+      // Aesthetic first when searching visuals
+      if (a.type === 'Aesthetic' && b.type !== 'Aesthetic') return -1;
+      if (b.type === 'Aesthetic' && a.type !== 'Aesthetic') return 1;
+      return b.similarity - a.similarity;
+    });
+  } else {
+    results.sort((a, b) => b.similarity - a.similarity);
+  }
+
+  // Clean up internal field
+  return results.map(({ _matchType, ...r }) => r);
 }
 
 // KV + Jina functions for semantic search
