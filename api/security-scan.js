@@ -11,6 +11,15 @@ function scanContent(text) {
         /\.innerHTML\s*=/gi,
         /setTimeout\s*\(\s*["'`]/gi,
         /setInterval\s*\(\s*["'`]/gi,
+        // Hidden commands
+        /\bos\.system\s*\(/gi,
+        /\bsubprocess\b/gi,
+        /\bshell_exec\s*\(/gi,
+        /\bsystem\s*\(/gi,
+        /\b__import__\s*\(/gi,
+        /\\x[0-9a-f]{2}/gi,
+        /\\u[0-9a-f]{4}/gi,
+        /String\.fromCharCode/gi,
       ],
     },
     {
@@ -22,6 +31,19 @@ function scanContent(text) {
         /XMLHttpRequest/gi,
         /navigator\.sendBeacon/gi,
         /atob\s*\(|btoa\s*\(/gi,
+        // Data collection — clipboard
+        /navigator\.clipboard/gi,
+        /\bpbcopy\b/gi,
+        /\bxclip\b/gi,
+        /\bclipboard\b/gi,
+        // Data collection — keylogging
+        /\bkeydown\b.*\b(send|post|fetch|ajax)\b/gi,
+        /\bkeypress\b.*\b(send|post|fetch|ajax)\b/gi,
+        /\bkeyup\b.*\b(send|post|fetch|ajax)\b/gi,
+        // Data collection — screen capture
+        /\bscreenshot\b/gi,
+        /screen\.capture/gi,
+        /\bhtml2canvas\b/gi,
       ],
     },
     {
@@ -56,6 +78,54 @@ function scanContent(text) {
         /\bsudo\b/gi,
         /child_process/gi,
         /\bspawn\s*\(|\bexecSync\s*\(/gi,
+        // Privilege escalation — Docker escape
+        /\bdocker\s+run\b/gi,
+        /--privileged\b/gi,
+        /-v\s+\/:/gi,
+        // Privilege escalation — SSH
+        /\bssh-keygen\b/gi,
+        /authorized_keys/gi,
+        /\bid_rsa\b/gi,
+        // Privilege escalation — sudo installs
+        /\bsudo\s+npm\b/gi,
+        /\bsudo\s+pip\b/gi,
+        /\bsudo\s+apt\b/gi,
+      ],
+    },
+    {
+      name: 'Prompt Injection',
+      patterns: [
+        // System prompt override attempts
+        /ignore\s+(all\s+)?previous\s+(instructions?|prompts?)/gi,
+        /disregard\s+(all\s+)?(previous\s+)?instructions?/gi,
+        /you\s+are\s+now\b/gi,
+        /new\s+role\s*:/gi,
+        /forget\s+everything/gi,
+        // Role manipulation
+        /act\s+as\s+(a\s+)?/gi,
+        /pretend\s+to\s+be\b/gi,
+        /switch\s+to\s+(a\s+)?/gi,
+        /override\s+safety/gi,
+        // Hidden instructions in markdown
+        /<!--.*?(run|exec|ignore|override|system|prompt).*?-->/gis,
+        /\u200b|\u200c|\u200d|\ufeff/g,
+      ],
+    },
+    {
+      name: 'Supply Chain',
+      patterns: [
+        // Post-install scripts
+        /["']?(pre|post)install["']?\s*:/gi,
+        // Dynamic requires
+        /require\s*\(\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*\)/gi,
+        /require\s*\(\s*`/gi,
+        // Typosquatting indicators (common misspellings of popular packages)
+        /\blodahs\b|\blodash[-_]es\b/gi,
+        /\bchalck\b|\bchalk[-_]js\b/gi,
+        /\baxois\b|\baxio\b/gi,
+        /\brequets\b|\brequst\b/gi,
+        /\bnoed-fetch\b|\bnode-fech\b/gi,
+        /\bcross-env\b.*\bcross-env\b/gi,
       ],
     },
   ];
@@ -156,6 +226,51 @@ function scanContent(text) {
     name: 'Env Variable Access',
     detected: envMatches.length > 0,
     flags: [...new Set(envMatches)],
+  });
+
+  // Clipboard Access
+  const clipPatterns = [
+    /navigator\.clipboard/gi,
+    /\bclipboard\b/gi,
+    /\bpbcopy\b/gi,
+    /\bpbpaste\b/gi,
+    /\bxclip\b/gi,
+    /\bxsel\b/gi,
+    /clipboard\.(read|write|readText|writeText)/gi,
+  ];
+  const clipMatches = [];
+  for (const p of clipPatterns) {
+    const m = text.match(p);
+    if (m) clipMatches.push(...m.map(x => x.trim()));
+  }
+  permissionScopes.push({
+    name: 'Clipboard Access',
+    detected: clipMatches.length > 0,
+    flags: [...new Set(clipMatches)],
+  });
+
+  // Process Spawning
+  const procPatterns = [
+    /child_process/gi,
+    /\bspawn\s*\(/gi,
+    /\bexecSync\s*\(/gi,
+    /\bexecFile\s*\(/gi,
+    /\bfork\s*\(/gi,
+    /\bexec\s*\(/gi,
+    /\bsubprocess\b/gi,
+    /\bos\.system\s*\(/gi,
+    /\bshell_exec\s*\(/gi,
+    /\bpopen\s*\(/gi,
+  ];
+  const procMatches = [];
+  for (const p of procPatterns) {
+    const m = text.match(p);
+    if (m) procMatches.push(...m.map(x => x.trim()));
+  }
+  permissionScopes.push({
+    name: 'Process Spawning',
+    detected: procMatches.length > 0,
+    flags: [...new Set(procMatches)],
   });
 
   return {
