@@ -659,13 +659,27 @@
                 }
             }).join('');
 
-            // Threat Dimensions — only show if there are actual warnings/failures
+            // Threat Dimensions — always show section
             const dimsWrapper = document.getElementById('scan-dimensions-wrapper');
             const dimsEl = document.getElementById('scan-dimensions');
             if (scan.dimensions && scan.dimensions.length > 0) {
+                dimsWrapper.classList.remove('hidden');
                 const hasIssues = scan.dimensions.some(d => d.status !== 'pass');
+
+                const dimensionExplanations = {
+                    'Prompt Injection': 'This skill contains patterns that may attempt to override AI agent instructions',
+                    'Supply Chain': 'This skill references potentially risky package installation patterns',
+                    'Code Injection': 'This skill contains code execution patterns — review before use',
+                    'Data Exfiltration': 'This skill may send data to external servers',
+                    'Credential Access': 'This skill may access sensitive credentials or API keys',
+                    'File System Risk': 'This skill may modify or delete files on your system',
+                    'Network & Persistence': 'This skill may install persistent services or escalate privileges',
+                };
+
+                // Dimensions that should show all flags (not truncated)
+                const showAllFlagsDimensions = ['Prompt Injection', 'Supply Chain'];
+
                 if (hasIssues) {
-                    dimsWrapper.classList.remove('hidden');
                     const statusColors = {
                         warning: { dot: 'bg-amber-400', text: 'text-amber-600', label: 'Warning' },
                         fail: { dot: 'bg-red-400', text: 'text-red-600', label: 'Fail' },
@@ -673,17 +687,33 @@
                     // Only show dimensions with issues
                     dimsEl.innerHTML = scan.dimensions.filter(d => d.status !== 'pass').map(dim => {
                         const sc = statusColors[dim.status] || statusColors.warning;
+                        const showAll = showAllFlagsDimensions.includes(dim.name);
                         const flagsHtml = (dim.flags && dim.flags.length > 0)
-                            ? ` <span class="text-[11px] text-neutral-400 font-mono">${dim.flags.slice(0, 2).join(', ')}${dim.flags.length > 2 ? ' +' + (dim.flags.length - 2) : ''}</span>`
+                            ? showAll
+                                ? ` <span class="text-[11px] text-neutral-400 font-mono">${dim.flags.join(', ')}</span>`
+                                : ` <span class="text-[11px] text-neutral-400 font-mono">${dim.flags.slice(0, 2).join(', ')}${dim.flags.length > 2 ? ' +' + (dim.flags.length - 2) : ''}</span>`
                             : '';
-                        return `<div class="flex items-center justify-between py-2">
-                            <div class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full ${sc.dot}"></span>
-                                <span class="text-[11px] md:text-xs font-medium grotesk-text text-neutral-600">${dim.name}</span>${flagsHtml}
+                        const explanation = dimensionExplanations[dim.name] || '';
+                        const explanationHtml = explanation
+                            ? `<div class="pl-[14px] mt-0.5 mb-1"><span class="text-[10px] md:text-[11px] text-neutral-400 grotesk-text italic leading-tight">${explanation}</span></div>`
+                            : '';
+                        return `<div class="py-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="w-1.5 h-1.5 rounded-full ${sc.dot} flex-shrink-0"></span>
+                                    <span class="text-[11px] md:text-xs font-medium grotesk-text text-neutral-600">${dim.name}</span>${flagsHtml}
+                                </div>
+                                <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-widest ${sc.text} grotesk-text flex-shrink-0">${sc.label}</span>
                             </div>
-                            <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-widest ${sc.text} grotesk-text">${sc.label}</span>
+                            ${explanationHtml}
                         </div>`;
                     }).join('');
+                } else {
+                    // All clear — show green state
+                    dimsEl.innerHTML = `<div class="flex items-center gap-2 py-2">
+                        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"></path></svg>
+                        <span class="text-[11px] md:text-xs font-medium grotesk-text text-emerald-600">All Clear — no security issues detected across ${scan.dimensions.length} dimensions</span>
+                    </div>`;
                 }
             }
         }
