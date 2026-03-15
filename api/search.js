@@ -218,24 +218,18 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Layer 1: instant keyword/DNA match
+    // Layer 1: exact keyword/DNA match (fonts, colors, author, name)
     const kwResults = keywordSearch(query.trim());
 
-    // Layer 2: Jina semantic search (parallel)
+    // If keyword match found confident results, return those only
+    // This avoids semantic noise polluting exact matches
+    if (kwResults.length > 0) {
+      return res.status(200).json({ results: kwResults.slice(0, 8), query });
+    }
+
+    // Layer 2: fall back to Jina semantic search only when no keyword match
     const semResults = await semanticSearch(query.trim());
-
-    // Merge: keyword results first (higher confidence), then semantic, dedupe by path
-    const seen = new Set();
-    const merged = [];
-
-    for (const r of kwResults) {
-      if (!seen.has(r.path)) { seen.add(r.path); merged.push(r); }
-    }
-    for (const r of semResults) {
-      if (!seen.has(r.path)) { seen.add(r.path); merged.push(r); }
-    }
-
-    return res.status(200).json({ results: merged.slice(0, 8), query });
+    return res.status(200).json({ results: semResults.slice(0, 8), query });
   } catch (err) {
     console.error('Search error:', err);
     return res.status(500).json({ error: err.message });
