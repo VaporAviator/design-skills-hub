@@ -460,7 +460,7 @@ let INDEX_SKILLS = [];
     INDEX_SKILLS = data.skills || [];
 
     // Render leaderboard (top 6)
-    const top6 = INDEX_SKILLS.slice(0, 6);
+    const top6 = INDEX_SKILLS.slice(0, 10);
     const container = document.getElementById('leaderboard-list');
     container.innerHTML = top6.map((skill, i) => `
       <div class="group flex items-start md:items-center justify-between p-4 md:p-6 ${skill.highlighted ? 'bg-white hover:bg-neutral-50 studio-pick-glow' : 'bg-white hover:bg-neutral-50 border border-neutral-100'} rounded-3xl transition-all cursor-pointer relative" onclick="fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({skill:'${skill.path}'})}).catch(()=>{});location.href='skill-detail.html?id=${skill.path}'">
