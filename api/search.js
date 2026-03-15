@@ -42,7 +42,7 @@ const SKILL_DNA = {
     fonts: ['Inter'], author: 'Owl-Listener',
   },
   'carmahhawwari/ui-design-brain': {
-    colors: ['#4F46E5','#1E1B4B','#EEF2FF'], colorWords: ['indigo','purple','violet','deep','dark'],
+    colors: ['#4F46E5','#1E1B4B','#EEF2FF'], colorWords: ['indigo','purple','violet','deep','dark','blue','navy'],
     fonts: ['DM Sans'], author: 'carmahhawwari',
   },
   'wshobson/tailwind-design-system': {

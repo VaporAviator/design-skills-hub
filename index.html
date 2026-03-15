@@ -738,7 +738,7 @@ function renderResults(results, query) {
               <span class="block grotesk-text font-bold text-sm md:text-base">${r.installs||''}</span>
               <span class="block grotesk-text text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Installs</span>
             </div>
-            <span class="grotesk-text text-[10px] font-bold text-neutral-300 uppercase tracking-widest">${Math.round((r.similarity/maxScore)*100)}% match</span>
+            <span class="grotesk-text text-[10px] font-bold text-neutral-300 uppercase tracking-widest">${Math.min(Math.round(r.similarity*100), 100)}% match</span>
           </div>
         </div>
       `).join('')}
