@@ -130,8 +130,6 @@ module.exports = async function handler(req, res) {
     if (result) {
       skill.securityScan = scanContent(result.content);
       skill.securityScan.source = result.source;
-      // Store raw markdown content for detail page rendering
-      skill.skillContent = result.content;
       // Extract DNA only for Aesthetic skills
       if (skill.type === 'Aesthetic') {
         const dna = extractDNA(result.content);

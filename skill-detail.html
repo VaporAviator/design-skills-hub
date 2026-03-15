@@ -374,283 +374,42 @@
     </footer>
 
     <script>
-        // Dynamic detail page
+        // Dynamic detail page — all data from /api/skills
         const urlParams = new URLSearchParams(window.location.search);
         const skillId = urlParams.get('id');
-
-        // Visual DNA data for Aesthetic skills
-        const visualDNAMap = {
-            'vaporaviator/easel-style': {
-                colors: ['#f9f9f9','#000000','#ffffff'],
-                labels: ['Background','Accent','Foreground'],
-                font1: 'Instrument Serif', font1Label: 'Primary Heading System',
-                font2: 'Space Grotesk', font2Label: 'Functional & Body System'
-            },
-            'anthropics/frontend-design': {
-                colors: ['#0D0D0D','#E8533F','#F7F7F5'],
-                labels: ['Primary','Accent','Surface'],
-                font1: 'Clash Display', font1Label: 'Display & Heading System',
-                font2: 'Satoshi', font2Label: 'Body & Interface System'
-            },
-            'sleekdotdesign/sleek-design-mobile-apps': {
-                colors: ['#1E1E2E','#A78BFA','#FFFFFF'],
-                labels: ['Background','Primary','Surface'],
-                font1: 'SF Pro Display', font1Label: 'Native Heading System',
-                font2: 'SF Pro Text', font2Label: 'Interface & Body System'
-            },
-            'pbakaus/impeccable': {
-                colors: ['#FDFCFB','#1A1A1A','#E2725B'],
-                labels: ['Canvas','Primary','Accent'],
-                font1: 'Fraunces', font1Label: 'Editorial Heading System',
-                font2: 'Inter', font2Label: 'Functional UI System'
-            },
-            'anthropics/canvas-design': {
-                colors: ['#F5F0EB','#2D2D2D','#C4956A'],
-                labels: ['Canvas','Charcoal','Bronze'],
-                font1: 'Cormorant Garamond', font1Label: 'Museum Display System',
-                font2: 'Karla', font2Label: 'Caption & Body System'
-            },
-            'anthropics/brand-guidelines': {
-                colors: ['#D4A27F','#191919','#FAFAF8'],
-                labels: ['Brand Tan','Primary','Surface'],
-                font1: 'Poppins', font1Label: 'Brand Heading System',
-                font2: 'Lora', font2Label: 'Brand Body System'
-            },
-            'VaporAviator/vaporaviator-lab-style': {
-                colors: ['#050505','#9d84ba','#171717'],
-                labels: ['Background','Accent Purple','Surface'],
-                font1: 'Space Grotesk', font1Label: 'Headline & UI System',
-                font2: 'Inter', font2Label: 'Body & Description System'
-            },
-            'anthropics/theme-factory': {
-                colors: ['#1A1A2E','#E94560','#F5F5F5'],
-                labels: ['Deep Navy','Vivid Red','Surface'],
-                font1: 'Playfair Display', font1Label: 'Display Heading System',
-                font2: 'Source Sans Pro', font2Label: 'Body & UI System'
-            },
-            'Owl-Listener/designer-skills': {
-                colors: ['#0EA5E9','#0F172A','#F8FAFC'],
-                labels: ['Sky Blue','Slate','Surface'],
-                font1: 'Inter', font1Label: 'Interface System',
-                font2: 'Inter', font2Label: 'Body System'
-            },
-            'carmahhawwari/ui-design-brain': {
-                colors: ['#4F46E5','#1E1B4B','#EEF2FF'],
-                labels: ['Indigo','Deep Indigo','Surface'],
-                font1: 'DM Sans', font1Label: 'Interface Heading System',
-                font2: 'DM Sans', font2Label: 'Body System'
-            }
-        };
-
-        const skillDataMap = {
-            'vaporaviator/easel-style': {
-                name: 'VaporAviator Easel Style',
-                github: 'https://github.com/VaporAviator/easel-style',
-                website: '',
-                avatar: 'https://unavatar.io/twitter/VaporAviator',
-                stars: '9.7K',
-                installs: '28,600',
-                type: 'Aesthetic',
-                description: 'Modern, high-contrast aesthetic with Instrument Serif and Space Grotesk. The signature style of VaporAviator NYC. Defines a complete visual DNA including typography hierarchy, spatial composition, and monochrome palette with 40px radius system.',
-                bullets: ['Instrument Serif + Space Grotesk type system', 'High-contrast monochrome palette', '40px border radius design language', 'Glass-nav and shadow-2xl depth system']
-            },
-            'vercel-labs/vercel-react-best-practices': {
-                name: 'Vercel React Best Practices',
-                github: 'https://github.com/vercel-labs/agent-skills',
-                website: 'https://vercel.com',
-                avatar: 'https://unavatar.io/github/vercel',
-                stars: '22.8K',
-                installs: '197,300',
-                type: 'Engineering',
-                description: 'Comprehensive performance optimization guide for React and Next.js applications maintained by Vercel. Contains 58 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.',
-                bullets: ['58 performance rules across 8 categories', 'Critical/High/Medium priority tiers', 'Async, bundle, server, client optimizations', 'React 19 and Next.js App Router patterns']
-            },
-            'vercel-labs/web-design-guidelines': {
-                name: 'Web Design Guidelines',
-                github: 'https://github.com/vercel-labs/agent-skills',
-                website: 'https://vercel.com',
-                avatar: 'https://unavatar.io/github/vercel',
-                stars: '22.8K',
-                installs: '154,800',
-                type: 'Engineering',
-                description: 'Review files for compliance with Web Interface Guidelines. Fetches the latest standards, reads specified files, applies validation rules, and outputs compliance findings in a concise format.',
-                bullets: ['Automated design compliance checking', 'Concise file:line output format', 'Fetches latest Web Interface Guidelines', 'Integrates with CI/CD pipelines']
-            },
-            'anthropics/frontend-design': {
-                name: 'Frontend Design',
-                github: 'https://github.com/anthropics/skills',
-                website: '',
-                avatar: 'https://unavatar.io/github/anthropics',
-                stars: '90.8K',
-                installs: '143,700',
-                type: 'Aesthetic',
-                description: 'Create distinctive, production-grade frontend interfaces that avoid generic AI aesthetics. Emphasizes working code with meticulous attention to aesthetic details and creative execution.',
-                bullets: ['Distinctive typography \u2014 avoids generic fonts', 'Cohesive color palettes with sharp accents', 'CSS animations, scroll triggers, hover states', 'Asymmetry, overlap, and unexpected layouts']
-            },
-            'sleekdotdesign/sleek-design-mobile-apps': {
-                name: 'Sleek Design',
-                github: 'https://github.com/sleekdotdesign/agent-skills',
-                website: 'https://sleek.design',
-                avatar: 'https://unavatar.io/github/sleekdotdesign',
-                stars: '8',
-                installs: '122,500',
-                type: 'Aesthetic',
-                description: 'AI-powered mobile application design tool. Create projects, describe designs in natural language, and receive rendered screen outputs via REST API endpoints.',
-                bullets: ['Natural language design requests', 'Screenshot rendering with custom formatting', 'Project and component management', 'Async and sync execution modes']
-            },
-            'pbakaus/impeccable': {
-                name: 'Impeccable',
-                github: 'https://github.com/pbakaus/impeccable',
-                website: 'https://impeccable.style',
-                avatar: 'https://unavatar.io/github/pbakaus',
-                stars: '3.5K',
-                installs: '85,200',
-                type: 'Aesthetic',
-                description: 'Enhanced frontend-design skill providing design vocabulary and commands for AI assistants. Includes 17 design commands like /polish, /audit, /distill, and /bolder for AI-driven aesthetics.',
-                bullets: ['17 design slash commands (/polish, /audit, etc.)', 'Design patterns and anti-patterns library', 'Typography, color, layout, motion vocabulary', 'Multi-platform: Cursor, Claude, Gemini CLI']
-            },
-            'anthropics/canvas-design': {
-                name: 'Canvas Design',
-                github: 'https://github.com/anthropics/skills',
-                website: '',
-                avatar: 'https://unavatar.io/github/anthropics',
-                stars: '90.8K',
-                installs: '17,000',
-                type: 'Aesthetic',
-                description: 'Create visual design philosophies \u2014 aesthetic movements expressed through form, color, composition, and minimal text. Produces museum-quality visual artifacts as PDF or PNG files.',
-                bullets: ['Design manifesto creation', 'Museum-quality visual artifact output', 'Minimal, strategic typography', 'PDF and PNG output formats']
-            },
-            'wshobson/tailwind-design-system': {
-                name: 'Tailwind Design System',
-                github: 'https://github.com/wshobson/agents',
-                website: '',
-                avatar: 'https://unavatar.io/github/wshobson',
-                stars: '31.0K',
-                installs: '16,900',
-                type: 'Engineering',
-                description: 'Build production-ready design systems with Tailwind CSS v4 including CSS-first configuration, design tokens, component variants, responsive patterns, and accessibility.',
-                bullets: ['CSS-first @theme configuration', 'OKLCH color tokens for semantic design', 'CVA component variant patterns', 'Dark mode and native animations']
-            },
-            'expo/building-native-ui': {
-                name: 'Building Native UI',
-                github: 'https://github.com/expo/skills',
-                website: 'https://expo.dev',
-                avatar: 'https://unavatar.io/github/expo',
-                stars: '1.4K',
-                installs: '16,700',
-                type: 'Engineering',
-                description: 'Comprehensive guide for building native iOS interfaces with Expo. Covers animations, controls, routing, styling, and platform-specific features aligned with Apple Human Interface Guidelines.',
-                bullets: ['Apple Human Interface Guidelines aligned', 'Native iOS controls and SF Symbols', 'Expo Router with Stacks and Tabs', 'Form sheets, modals, and transitions']
-            },
-            'google-labs-code/design-md': {
-                name: 'Design MD',
-                github: 'https://github.com/google-labs-code/stitch-skills',
-                website: '',
-                avatar: 'https://unavatar.io/github/google-labs-code',
-                stars: '2.3K',
-                installs: '13,600',
-                type: 'Engineering',
-                description: 'Analyze Stitch project assets and synthesize semantic design systems. Generates standardized DESIGN.md files documenting color palettes, typography rules, and component styling.',
-                bullets: ['Extracts design tokens from Stitch projects', 'Color palettes and typography documentation', 'Translates Tailwind/CSS to descriptive language', 'Integrates with Stitch MCP Server']
-            },
-            'anthropics/brand-guidelines': {
-                name: 'Brand Guidelines',
-                github: 'https://github.com/anthropics/skills',
-                website: '',
-                avatar: 'https://unavatar.io/github/anthropics',
-                stars: '90.8K',
-                installs: '12,200',
-                type: 'Aesthetic',
-                description: 'Access Anthropic\'s official brand identity and style resources. Includes brand color palette, Poppins/Lora typography system, and automatic accent color cycling for designs.',
-                bullets: ['Anthropic brand color palette', 'Poppins headings, Lora body typography', 'Smart font application by text size', 'Automatic accent color cycling']
-            },
-            'am-will/frontend-responsive-design-standards': {
-                name: 'Responsive Design Standards',
-                github: 'https://github.com/am-will/codex-skills',
-                website: '',
-                avatar: 'https://unavatar.io/github/am-will',
-                stars: '491',
-                installs: '5,100',
-                type: 'Engineering',
-                description: 'Mobile-first development standards with consistent breakpoints, fluid layouts using flexbox and CSS Grid, relative units, and touch-friendly interaction targets.',
-                bullets: ['Mobile-first mandatory approach', 'Standard Tailwind/Bootstrap breakpoints', 'Fluid layouts with flexbox and CSS Grid', 'Touch-friendly 44x44px minimum targets']
-            },
-            'anthropics/theme-factory': {
-                name: 'Theme Factory',
-                github: 'https://github.com/anthropics/skills/tree/main/skills/theme-factory',
-                website: '',
-                avatar: 'https://unavatar.io/github/anthropics',
-                stars: '92.7K',
-                installs: '21,400',
-                type: 'Aesthetic',
-                description: 'Anthropic\'s official theming toolkit for styling artifacts. Apply 10 pre-set professional themes with curated color palettes and font pairings to slides, docs, HTML pages, and any artifact.',
-                bullets: ['10 pre-set professional themes', 'Curated color palettes with hex codes', 'Complementary font pairings per theme', 'Apply to slides, docs, HTML, and more']
-            },
-            'Owl-Listener/designer-skills': {
-                name: 'Designer Skills Collection',
-                github: 'https://github.com/Owl-Listener/designer-skills',
-                website: '',
-                avatar: 'https://unavatar.io/github/Owl-Listener',
-                stars: '77',
-                installs: '3,200',
-                type: 'Aesthetic',
-                description: '63 design skills and 27 commands across 8 plugins covering the full design workflow — from user research and systems to UI, interaction design, prototyping, and design ops.',
-                bullets: ['63 skills across 8 domain plugins', '27 slash commands for chained workflows', 'Covers research, systems, UX, UI, and ops', 'MIT licensed, Claude Code compatible']
-            },
-            'carmahhawwari/ui-design-brain': {
-                name: 'UI Design Brain',
-                github: 'https://github.com/carmahhawwari/ui-design-brain',
-                website: '',
-                avatar: 'https://unavatar.io/github/carmahhawwari',
-                stars: '576',
-                installs: '8,400',
-                type: 'Aesthetic',
-                description: 'A knowledge base of 60+ UI component patterns sourced from component.gallery. Replaces generic AI guessing with real design-system conventions for production-grade, SaaS-quality interfaces.',
-                bullets: ['60+ real component patterns from component.gallery', 'Single-column forms, card hierarchies, overlay rules', 'WCAG AA accessibility guidelines built-in', 'No generic AI aesthetics \u2014 senior SaaS quality']
-            }
-        };
+        let currentInstallCmd = '';
 
         if (skillId) {
             loadSkillData(skillId);
         }
 
         async function loadSkillData(skillId) {
-            // Start with hardcoded map as base (fallback for SEED_SKILLS)
-            let data = skillDataMap[skillId];
-            let apiMatch = null;
+            let data = null;
 
-            // Fetch from API to get dynamic data (securityScan, dna, skillContent, etc.)
+            // Fetch from API as primary source
             try {
                 const res = await fetch('/api/skills');
                 const json = await res.json();
                 const skills = json.skills || json;
-                apiMatch = skills.find(s => s.path === skillId || s.id === skillId);
+                const apiMatch = skills.find(s => s.path === skillId || s.id === skillId);
                 if (apiMatch) {
-                    if (!data) {
-                        // New submitted skill — build data entirely from API
-                        data = {
-                            name: apiMatch.name || skillId.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                            github: apiMatch.githubUrl || apiMatch.github || ('https://github.com/' + skillId),
-                            website: apiMatch.website || '',
-                            avatar: apiMatch.avatar || ('https://unavatar.io/github/' + skillId.split('/')[0]),
-                            stars: apiMatch.stars ? Number(apiMatch.stars).toLocaleString() : '',
-                            installs: apiMatch.installs || '0',
-                            type: apiMatch.type || 'Aesthetic',
-                            description: apiMatch.description || 'A design skill for AI agents.',
-                            bullets: [],
-                            previewImage: apiMatch.previewImage || '',
-                            installCmd: apiMatch.installCmd || ''
-                        };
-                    }
-                    // Always merge dynamic fields from API
-                    if (apiMatch.securityScan) data.securityScan = apiMatch.securityScan;
-                    if (apiMatch.dna) data.dna = apiMatch.dna;
-                    if (apiMatch.skillContent) data.skillContent = apiMatch.skillContent;
-                    if (apiMatch.description && !skillDataMap[skillId]) data.description = apiMatch.description;
-                    if (apiMatch.installCmd) data.installCmd = apiMatch.installCmd;
-                    if (apiMatch.icon) data.apiIcon = apiMatch.icon;
-                    if (apiMatch.color) data.apiColor = apiMatch.color;
-                    if (!data.type && apiMatch.type) data.type = apiMatch.type;
+                    data = {
+                        name: apiMatch.name || skillId.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                        github: apiMatch.githubUrl || apiMatch.github || ('https://github.com/' + skillId),
+                        website: apiMatch.website || '',
+                        avatar: apiMatch.avatar || ('https://unavatar.io/github/' + skillId.split('/')[0]),
+                        stars: apiMatch.stars || '',
+                        installs: apiMatch.installs || '0',
+                        type: apiMatch.type || 'Aesthetic',
+                        description: apiMatch.description || 'A design skill for AI agents.',
+                        previewImage: apiMatch.previewImage || '',
+                        installCmd: apiMatch.installCmd || '',
+                        securityScan: apiMatch.securityScan || null,
+                        dna: apiMatch.dna || null,
+                        icon: apiMatch.icon || '',
+                        color: apiMatch.color || '',
+                        svg: apiMatch.svg || false
+                    };
                 }
             } catch(e) {
                 console.error('Failed to fetch skill data:', e);
@@ -673,32 +432,24 @@
                     avatar: 'https://unavatar.io/github/' + skillId.split('/')[0],
                     stars: '',
                     installs: '0',
+                    type: 'Aesthetic',
                     description: 'A design skill for AI agents.',
-                    bullets: [],
-                    previewImage: ''
+                    previewImage: '',
+                    installCmd: '',
+                    icon: '',
+                    color: ''
                 };
             }
 
             // Update title and heading
             document.querySelector('h1').innerText = data.name;
+            currentInstallCmd = data.installCmd || ('npx skills add https://github.com/' + skillId);
             const sidebarCmd = document.getElementById('sidebar-install-cmd');
-            if (sidebarCmd) sidebarCmd.innerText = data.installCmd || ('npx skills add https://github.com/' + skillId);
+            if (sidebarCmd) sidebarCmd.innerText = currentInstallCmd;
             document.getElementById('skill-intro').innerText = data.description;
-
-            // Update description text
-
-            // Update description bullets
-            if (data.bullets && data.bullets.length > 0) {
-                const bulletList = document.getElementById('desc-bullets');
-                if (bulletList) {
-                    bulletList.innerHTML = data.bullets.map(b => '<li>' + b + '</li>').join('');
-                }
-            }
 
             // Update installs count
             if (data.installs) {
-                const installsEl = document.querySelector('.text-sm.font-bold.grotesk-text:not(.italic)');
-                // Find the installs row specifically
                 const metaRows = document.querySelectorAll('.space-y-6 .flex.justify-between');
                 metaRows.forEach(row => {
                     const label = row.querySelector('.text-neutral-400');
@@ -729,38 +480,32 @@
                 webLink.href = data.website;
             }
 
-            // Update skill icon
+            // Update skill icon from API data
             const iconEl = document.getElementById('skill-icon');
             if (iconEl) {
-                const iconMap = {
-                    'vaporaviator/easel-style': { icon: 'E', color: 'bg-black', textColor: 'text-white' },
-                    'vercel-labs/vercel-react-best-practices': { svg: true, color: 'bg-neutral-200', textColor: 'text-black' },
-                    'vercel-labs/web-design-guidelines': { svg: true, color: 'bg-neutral-200', textColor: 'text-black' },
-                    'anthropics/frontend-design': { icon: 'FD', color: 'bg-orange-50', textColor: 'text-orange-600' },
-                    'sleekdotdesign/sleek-design-mobile-apps': { icon: 'SD', color: 'bg-pink-50', textColor: 'text-pink-600' },
-                    'pbakaus/impeccable': { icon: 'IM', color: 'bg-yellow-50', textColor: 'text-yellow-600' },
-                    'anthropics/canvas-design': { icon: 'CD', color: 'bg-orange-50', textColor: 'text-orange-600' },
-                    'wshobson/tailwind-design-system': { icon: 'TW', color: 'bg-blue-50', textColor: 'text-blue-600' },
-                    'expo/building-native-ui': { icon: 'EX', color: 'bg-violet-50', textColor: 'text-violet-600' },
-                    'google-labs-code/design-md': { icon: 'DM', color: 'bg-emerald-50', textColor: 'text-emerald-600' },
-                    'anthropics/brand-guidelines': { icon: 'BG', color: 'bg-orange-50', textColor: 'text-orange-600' },
-                    'am-will/frontend-responsive-design-standards': { icon: 'RD', color: 'bg-amber-50', textColor: 'text-amber-600' },
-                    'anthropics/theme-factory': { icon: 'TF', color: 'bg-orange-50', textColor: 'text-orange-600' },
-                    'Owl-Listener/designer-skills': { icon: 'DS', color: 'bg-sky-50', textColor: 'text-sky-600' },
-                    'carmahhawwari/ui-design-brain': { icon: 'UB', color: 'bg-indigo-50', textColor: 'text-indigo-600' }
+                // Map bg-color classes to appropriate text colors
+                const textColorMap = {
+                    'bg-black': 'text-white',
+                    'bg-neutral-200': 'text-black',
+                    'bg-orange-50': 'text-orange-600',
+                    'bg-pink-50': 'text-pink-600',
+                    'bg-yellow-50': 'text-yellow-600',
+                    'bg-blue-50': 'text-blue-600',
+                    'bg-violet-50': 'text-violet-600',
+                    'bg-emerald-50': 'text-emerald-600',
+                    'bg-amber-50': 'text-amber-600',
+                    'bg-sky-50': 'text-sky-600',
+                    'bg-indigo-50': 'text-indigo-600'
                 };
-                const ic = iconMap[skillId];
-                if (ic) {
-                    iconEl.className = 'hidden md:flex w-24 h-24 rounded-[32px] items-center justify-center font-bold shadow-2xl ' + ic.color + ' ' + ic.textColor;
-                    if (ic.svg) {
+                if (data.icon || data.svg) {
+                    const bgColor = data.color || 'bg-neutral-100';
+                    const textColor = textColorMap[bgColor] || 'text-neutral-600';
+                    iconEl.className = 'hidden md:flex w-24 h-24 rounded-[32px] items-center justify-center font-bold shadow-2xl ' + bgColor + ' ' + textColor;
+                    if (data.svg) {
                         iconEl.innerHTML = '<svg class="w-10 h-10 fill-current" viewBox="0 0 24 24"><path d="M24 22.525H0L12 1.475L24 22.525Z"/></svg>';
                     } else {
-                        iconEl.innerHTML = '<span class="serif-text text-4xl font-bold italic">' + ic.icon + '</span>';
+                        iconEl.innerHTML = '<span class="serif-text text-4xl font-bold italic">' + data.icon + '</span>';
                     }
-                } else if (data.apiIcon && data.apiColor) {
-                    // Dynamic icon from API (submitted skills)
-                    iconEl.className = 'hidden md:flex w-24 h-24 rounded-[32px] items-center justify-center font-bold shadow-2xl ' + data.apiColor + ' text-neutral-600';
-                    iconEl.innerHTML = '<span class="serif-text text-4xl font-bold italic">' + data.apiIcon + '</span>';
                 } else {
                     const initials = skillId.split('/').pop().split('-').map(w => w[0]).join('').toUpperCase().slice(0,2);
                     iconEl.className = 'hidden md:flex w-24 h-24 rounded-[32px] items-center justify-center font-bold shadow-2xl bg-neutral-100 text-neutral-600';
@@ -768,13 +513,11 @@
                 }
             }
 
-            // Visual DNA: show/hide and populate dynamically
-            // Prefer hardcoded map for seeds, fall back to API dna for submitted skills
+            // Visual DNA: show/hide and populate from API dna field
             const visualDnaSection = document.getElementById('visual-dna');
-            const dnaSource = visualDNAMap[skillId] || (data.type === 'Aesthetic' && data.dna) || null;
-            if (data.type === 'Aesthetic' && dnaSource) {
+            if (data.type === 'Aesthetic' && data.dna) {
                 visualDnaSection.style.display = '';
-                const dna = dnaSource;
+                const dna = data.dna;
                 // Update colors
                 for (let i = 0; i < 3; i++) {
                     const cel = document.getElementById('dna-c' + (i + 1));
@@ -820,7 +563,7 @@
             // Display security scan results
             displaySecurityScan(data);
 
-            // Fetch and render full README / SKILL.md
+            // Fetch and render full README / SKILL.md (always live from GitHub)
             loadSkillReadme(skillId, data);
         }
 
@@ -955,28 +698,6 @@
             const bulletsEl = document.getElementById('desc-bullets');
             if (!container) return;
 
-            // If we have skillContent from API (submitted skills), render it directly
-            if (data.skillContent) {
-                container.classList.remove('hidden');
-                const html = DOMPurify.sanitize(marked.parse(data.skillContent));
-                contentEl.innerHTML = html;
-                contentEl.classList.remove('hidden');
-                if (bulletsEl) bulletsEl.classList.add('hidden');
-
-                requestAnimationFrame(() => {
-                    if (contentEl.scrollHeight > 700) {
-                        contentEl.classList.add('collapsed');
-                        toggleEl.classList.remove('hidden');
-                    }
-                });
-
-                // Show source link
-                const ghUrl = data.github || ('https://github.com/' + skillId);
-                sourceLink.href = ghUrl.replace(/\/?$/, '') + '/blob/main/SKILL.md';
-                sourceEl.classList.remove('hidden');
-                return;
-            }
-
             // Determine repo path vs subpath from data.github
             let repoPath = skillId;
             let subpath = '';
@@ -1066,7 +787,7 @@ Refer to Design Skills Hub for full specification if needed.`;
         // Install Skill button
         const currentPath = skillId || 'vaporaviator/easel-style';
         document.getElementById('install-btn').addEventListener('click', () => {
-            const cmd = (typeof data !== 'undefined' && data.installCmd) || ('npx skills add https://github.com/' + currentPath);
+            const cmd = currentInstallCmd || ('npx skills add https://github.com/' + currentPath);
             navigator.clipboard.writeText(cmd).then(() => showToast('Copied!'));
             fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: currentPath }) }).catch(() => {});
             // Increment displayed installs count in DOM
