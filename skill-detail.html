@@ -615,40 +615,49 @@
         }
 
         async function loadSkillData(skillId) {
+            // Start with hardcoded map as base (fallback for SEED_SKILLS)
             let data = skillDataMap[skillId];
+            let apiMatch = null;
 
-            // Fetch from API to get securityScan and fill missing data
+            // Fetch from API to get dynamic data (securityScan, dna, skillContent, etc.)
             try {
                 const res = await fetch('/api/skills');
                 const json = await res.json();
                 const skills = json.skills || json;
-                const match = skills.find(s => s.path === skillId || s.id === skillId);
-                if (match) {
+                apiMatch = skills.find(s => s.path === skillId || s.id === skillId);
+                if (apiMatch) {
                     if (!data) {
+                        // New submitted skill — build data entirely from API
                         data = {
-                            name: match.name || skillId.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                            github: match.githubUrl || ('https://github.com/' + skillId),
-                            website: '',
-                            avatar: match.avatar || ('https://unavatar.io/github/' + skillId.split('/')[0]),
-                            stars: match.stars ? Number(match.stars).toLocaleString() : '',
-                            installs: match.installs || '0',
-                            type: match.type || 'Aesthetic',
-                            description: match.description || 'A design skill for AI agents.',
+                            name: apiMatch.name || skillId.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                            github: apiMatch.githubUrl || apiMatch.github || ('https://github.com/' + skillId),
+                            website: apiMatch.website || '',
+                            avatar: apiMatch.avatar || ('https://unavatar.io/github/' + skillId.split('/')[0]),
+                            stars: apiMatch.stars ? Number(apiMatch.stars).toLocaleString() : '',
+                            installs: apiMatch.installs || '0',
+                            type: apiMatch.type || 'Aesthetic',
+                            description: apiMatch.description || 'A design skill for AI agents.',
                             bullets: [],
-                            previewImage: match.previewImage || ''
+                            previewImage: apiMatch.previewImage || '',
+                            installCmd: apiMatch.installCmd || ''
                         };
                     }
-                    // Always merge securityScan from API
-                    if (match.securityScan) {
-                        data.securityScan = match.securityScan;
-                    }
+                    // Always merge dynamic fields from API
+                    if (apiMatch.securityScan) data.securityScan = apiMatch.securityScan;
+                    if (apiMatch.dna) data.dna = apiMatch.dna;
+                    if (apiMatch.skillContent) data.skillContent = apiMatch.skillContent;
+                    if (apiMatch.description && !skillDataMap[skillId]) data.description = apiMatch.description;
+                    if (apiMatch.installCmd) data.installCmd = apiMatch.installCmd;
+                    if (apiMatch.icon) data.apiIcon = apiMatch.icon;
+                    if (apiMatch.color) data.apiColor = apiMatch.color;
+                    if (!data.type && apiMatch.type) data.type = apiMatch.type;
                 }
             } catch(e) {
                 console.error('Failed to fetch skill data:', e);
             }
 
             // Fallback: if securityScan still missing, call scan API directly
-            if (!data.securityScan) {
+            if (data && !data.securityScan) {
                 try {
                     const scanRes = await fetch('/api/security-scan?path=' + encodeURIComponent(skillId));
                     if (scanRes.ok) data.securityScan = await scanRes.json();
@@ -748,6 +757,10 @@
                     } else {
                         iconEl.innerHTML = '<span class="serif-text text-4xl font-bold italic">' + ic.icon + '</span>';
                     }
+                } else if (data.apiIcon && data.apiColor) {
+                    // Dynamic icon from API (submitted skills)
+                    iconEl.className = 'hidden md:flex w-24 h-24 rounded-[32px] items-center justify-center font-bold shadow-2xl ' + data.apiColor + ' text-neutral-600';
+                    iconEl.innerHTML = '<span class="serif-text text-4xl font-bold italic">' + data.apiIcon + '</span>';
                 } else {
                     const initials = skillId.split('/').pop().split('-').map(w => w[0]).join('').toUpperCase().slice(0,2);
                     iconEl.className = 'hidden md:flex w-24 h-24 rounded-[32px] items-center justify-center font-bold shadow-2xl bg-neutral-100 text-neutral-600';
@@ -756,6 +769,7 @@
             }
 
             // Visual DNA: show/hide and populate dynamically
+            // Prefer hardcoded map for seeds, fall back to API dna for submitted skills
             const visualDnaSection = document.getElementById('visual-dna');
             const dnaSource = visualDNAMap[skillId] || (data.type === 'Aesthetic' && data.dna) || null;
             if (data.type === 'Aesthetic' && dnaSource) {
@@ -940,6 +954,28 @@
             const sourceLink = document.getElementById('readme-source-link');
             const bulletsEl = document.getElementById('desc-bullets');
             if (!container) return;
+
+            // If we have skillContent from API (submitted skills), render it directly
+            if (data.skillContent) {
+                container.classList.remove('hidden');
+                const html = DOMPurify.sanitize(marked.parse(data.skillContent));
+                contentEl.innerHTML = html;
+                contentEl.classList.remove('hidden');
+                if (bulletsEl) bulletsEl.classList.add('hidden');
+
+                requestAnimationFrame(() => {
+                    if (contentEl.scrollHeight > 700) {
+                        contentEl.classList.add('collapsed');
+                        toggleEl.classList.remove('hidden');
+                    }
+                });
+
+                // Show source link
+                const ghUrl = data.github || ('https://github.com/' + skillId);
+                sourceLink.href = ghUrl.replace(/\/?$/, '') + '/blob/main/SKILL.md';
+                sourceEl.classList.remove('hidden');
+                return;
+            }
 
             // Determine repo path vs subpath from data.github
             let repoPath = skillId;

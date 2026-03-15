@@ -119,13 +119,13 @@ module.exports = async function handler(req, res) {
     // Sort: all skills by installs descending (no highlighted pinning)
     all.sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
 
-    const numbered = all.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
+    const numbered = all.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0'), githubUrl: s.githubUrl || s.github || '' }));
 
     return res.status(200).json({ skills: numbered, total: numbered.length });
   } catch (e) {
     // KV not configured — return seed data only
     const seeds = [...SEED_SKILLS].sort((a, b) => parseInstalls(b.installs) - parseInstalls(a.installs));
-    const numbered = seeds.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0') }));
+    const numbered = seeds.map((s, i) => ({ ...s, id: String(i + 1).padStart(2, '0'), githubUrl: s.github || '' }));
     return res.status(200).json({ skills: numbered, total: numbered.length });
   }
 };
